@@ -1,0 +1,28 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "PGSA Role",
+  "type": "object",
+  "required": ["role_id", "description", "scope", "must_update"],
+  "properties": {
+    "role_id": {"type": "string"},
+    "description": {"type": "string"},
+    "scope": {
+      "type": "array",
+      "items": {"type": "string"}
+    },
+    "external_bindings": {
+      "type": "object",
+      "additionalProperties": {"type": "string"}
+    },
+    "must_update": {
+      "type": "array",
+      "items": {"type": "string"}
+    },
+    "escalates_when": {
+      "type": "array",
+      "items": {"type": "string"}
+    }
+  },
+  "additionalProperties": true
+}
+

@@ -1,0 +1,44 @@
+{
+  "sessions": {
+    "backend": {
+      "must_update": [
+        "harness/backend.md",
+        "state/backend.summary.md",
+        "contracts/api.project.v1.json",
+        "ledger/coherence_ledger.jsonl"
+      ],
+      "owner_scope": [
+        "backend API",
+        "schema",
+        "permission logic"
+      ]
+    },
+    "docs_security_integration": {
+      "must_update": [
+        "harness/docs_security_integration.md",
+        "state/docs_security_integration.summary.md",
+        "reviews/security_review.md",
+        "integration/integration_report.json",
+        "ledger/coherence_ledger.jsonl"
+      ],
+      "owner_scope": [
+        "docs",
+        "security checklist",
+        "integration readiness"
+      ]
+    },
+    "frontend_components": {
+      "must_update": [
+        "harness/frontend_components.md",
+        "state/frontend_components.summary.md",
+        "reviews/frontend_components_review.md",
+        "ledger/coherence_ledger.jsonl"
+      ],
+      "owner_scope": [
+        "frontend UI",
+        "API consumption",
+        "shared components"
+      ]
+    }
+  }
+}

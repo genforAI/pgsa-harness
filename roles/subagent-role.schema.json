@@ -1,0 +1,25 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "PGSA Subagent Role",
+  "type": "object",
+  "required": ["subagent_role_id", "session", "scope", "handoff_to"],
+  "properties": {
+    "subagent_role_id": {"type": "string"},
+    "session": {"type": "string"},
+    "scope": {
+      "type": "array",
+      "items": {"type": "string"}
+    },
+    "handoff_to": {"type": "string"},
+    "must_report": {
+      "type": "array",
+      "items": {"type": "string"}
+    },
+    "escalate_to_project_when": {
+      "type": "array",
+      "items": {"type": "string"}
+    }
+  },
+  "additionalProperties": true
+}
+

@@ -1,0 +1,14 @@
+project_id: pgsa_project
+project_name: PGSA Project
+goal: Keep multi-session coding-agent work coherent across contracts, session state, reviews, integration, and handoff.
+modules:
+  - backend
+  - frontend
+  - docs
+  - security
+  - integration
+acceptance:
+  - Shared contracts match producer and consumer assumptions
+  - Session summaries describe changed files, decisions, risks, and contract impact
+  - Open semantic conflicts are recorded as merge proposals
+  - Integration report has no blocking drift

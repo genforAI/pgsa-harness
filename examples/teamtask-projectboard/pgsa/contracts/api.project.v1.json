@@ -1,0 +1,27 @@
+{
+  "acceptance_tests": [
+    "frontend consumes project_id",
+    "docs describe display_name",
+    "permission rule is reflected in UI"
+  ],
+  "breaking_change": false,
+  "consumer_sessions": [
+    "frontend_components",
+    "docs_security_integration"
+  ],
+  "contract_id": "api.project.v1",
+  "endpoint": "GET /api/projects/:id",
+  "last_updated_by": "backend",
+  "owner_session": "backend",
+  "requires_review": [
+    "frontend_components",
+    "docs_security_integration"
+  ],
+  "response_shape": {
+    "display_name": "string",
+    "permissions": "object",
+    "project_id": "string",
+    "team_members": "array"
+  },
+  "status": "accepted"
+}

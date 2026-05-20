@@ -1,0 +1,8 @@
+{
+  "blocking_issues": [],
+  "contract_violations": 0,
+  "integration_failures": 0,
+  "notes": "Initial scaffold.",
+  "status": "pending",
+  "tests_passed": null
+}

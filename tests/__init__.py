@@ -1,0 +1,2 @@
+"""PGSA smoke tests."""
+

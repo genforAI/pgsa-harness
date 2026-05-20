@@ -1,0 +1,12 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "PGSA Review Gate",
+  "type": "object",
+  "required": ["status"],
+  "properties": {
+    "status": {"type": "string"},
+    "blocking_issues": {"type": "array", "items": {"type": "string"}},
+    "notes": {"type": "string"}
+  },
+  "additionalProperties": true
+}

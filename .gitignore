@@ -1,0 +1,11 @@
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.venv/
+dist/
+build/
+*.egg-info/
+reports/
+examples/*/pgsa/*_runs/
+examples/*/pgsa/codex_capture_runs/
+examples/*/pgsa/codex_script_runs/

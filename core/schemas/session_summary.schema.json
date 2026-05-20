@@ -1,0 +1,14 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "PGSA Session Summary",
+  "type": "object",
+  "properties": {
+    "session": {"type": "string"},
+    "scope": {"type": "string"},
+    "completed": {"type": "array", "items": {"type": "string"}},
+    "changed_files": {"type": "array", "items": {"type": "string"}},
+    "contract_impact": {"type": "string"},
+    "integration_readiness": {"type": "string"}
+  },
+  "additionalProperties": true
+}
