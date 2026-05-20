@@ -257,3 +257,7 @@ Subagents 在 session 内部工作。session owner 或 Session Master 把它们�
 这不是 Codex / Claude / Grok 产品级 benchmark。
 
 产品级声明需要真实工具命令、prompts、transcripts、diffs、tests、timing、versions 和同一个 evaluator。
+
+## 许可证
+
+PGSA Harness Core 使用 Apache License 2.0。详见 `LICENSE`。

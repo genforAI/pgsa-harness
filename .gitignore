@@ -1,11 +1,54 @@
+# macOS / Finder
+.DS_Store
+._*
+.AppleDouble
+.LSOverride
+
+# Python bytecode and caches
 __pycache__/
 *.py[cod]
+*$py.class
 .pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# Virtual environments and local env files
 .venv/
-dist/
-build/
+venv/
+env/
+.env
+.env.*
+!.env.example
+
+# Packaging / build outputs
+/dist/
+/build/
 *.egg-info/
-reports/
+*.whl
+*.tar.gz
+
+# Local editor and tool state
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# Logs and temporary files
+*.log
+*.tmp
+*.temp
+
+# Local release artifacts; release zips should live outside the repo
+*.zip
+/reports/
+/release_archive/
+
+# Local PGSA run captures generated during experiments
 examples/*/pgsa/*_runs/
 examples/*/pgsa/codex_capture_runs/
 examples/*/pgsa/codex_script_runs/
+examples/*/pgsa/reports/drift_report.json
+examples/*/pgsa/reports/*_context.md

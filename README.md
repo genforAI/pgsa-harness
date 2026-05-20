@@ -318,6 +318,10 @@ This is not a Codex / Claude / Grok product benchmark.
 
 Product-level claims require real tool commands, prompts, transcripts, diffs, tests, timing, versions, and the same evaluator across conditions.
 
+## License
+
+PGSA Harness Core is licensed under the Apache License 2.0. See `LICENSE`.
+
 ## FAQ
 
 ### Are PGSA roles fixed?
