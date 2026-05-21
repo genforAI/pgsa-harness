@@ -1,4 +1,4 @@
-# Launch Post V1.18
+# Launch Post
 
 ## Main Post
 
