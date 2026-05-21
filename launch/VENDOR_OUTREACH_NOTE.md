@@ -1,4 +1,4 @@
-# Vendor Outreach Note V1.18
+# Vendor Outreach Note
 
 Subject: PGSA Harness Core v0.1: repo-local project-coherence layer for coding-agent workflows
 

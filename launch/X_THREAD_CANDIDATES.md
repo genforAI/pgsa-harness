@@ -1,4 +1,4 @@
-# X Thread Candidates V1.18
+# X Thread Candidates
 
 ## Thread 1: Builder Story
 

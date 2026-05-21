@@ -14,3 +14,10 @@ classifiers = [
 
 [project.scripts]
 pgsa = "pgsa_cli.main:main"
+
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+include = ["pgsa_cli*", "core*"]
