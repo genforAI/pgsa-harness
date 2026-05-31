@@ -3,9 +3,65 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "additionalProperties": true,
   "properties": {
-    "risk_tiers": {},
-    "router_id": {},
-    "routing_rules": {}
+    "risk_tiers": {
+      "additionalProperties": false,
+      "properties": {
+        "critical": {
+          "type": "string"
+        },
+        "high": {
+          "type": "string"
+        },
+        "low": {
+          "type": "string"
+        },
+        "medium": {
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "router_id": {
+      "pattern": "^[A-Za-z][A-Za-z0-9_.:-]*$",
+      "type": "string"
+    },
+    "routing_rules": {
+      "items": {
+        "additionalProperties": true,
+        "properties": {
+          "blocking": {
+            "type": "boolean"
+          },
+          "route": {
+            "items": {
+              "type": "string"
+            },
+            "minItems": 1,
+            "type": "array"
+          },
+          "rule_id": {
+            "pattern": "^[A-Za-z][A-Za-z0-9_.:-]*$",
+            "type": "string"
+          },
+          "when": {
+            "items": {
+              "type": "string"
+            },
+            "minItems": 1,
+            "type": "array"
+          }
+        },
+        "required": [
+          "rule_id",
+          "when",
+          "route",
+          "blocking"
+        ],
+        "type": "object"
+      },
+      "minItems": 1,
+      "type": "array"
+    }
   },
   "required": [
     "router_id",

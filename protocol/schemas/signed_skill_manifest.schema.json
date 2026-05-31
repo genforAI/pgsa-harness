@@ -3,8 +3,70 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "additionalProperties": true,
   "properties": {
-    "manifest_id": {},
-    "skills": {}
+    "manifest_id": {
+      "pattern": "^[A-Za-z][A-Za-z0-9_.:-]*$",
+      "type": "string"
+    },
+    "skills": {
+      "items": {
+        "additionalProperties": true,
+        "properties": {
+          "applies_to": {
+            "items": {
+              "type": "string"
+            },
+            "minItems": 1,
+            "type": "array"
+          },
+          "depends_on": {
+            "items": {
+              "pattern": "^(?!/)(?!.*(^|/)\\.\\.(/|$)).+",
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "risk": {
+            "enum": [
+              "low",
+              "medium",
+              "high",
+              "critical"
+            ],
+            "type": "string"
+          },
+          "signed_by": {
+            "type": "string"
+          },
+          "skill_id": {
+            "pattern": "^[A-Za-z][A-Za-z0-9_.:-]*$",
+            "type": "string"
+          },
+          "status": {
+            "enum": [
+              "active",
+              "draft",
+              "deprecated",
+              "disabled"
+            ],
+            "type": "string"
+          },
+          "version": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "skill_id",
+          "version",
+          "status",
+          "risk",
+          "applies_to",
+          "signed_by"
+        ],
+        "type": "object"
+      },
+      "minItems": 1,
+      "type": "array"
+    }
   },
   "required": [
     "manifest_id",

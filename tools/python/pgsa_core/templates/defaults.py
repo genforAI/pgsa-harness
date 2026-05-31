@@ -407,12 +407,14 @@ SCENARIO_TEST_TEMPLATE: dict[str, Any] = {
     "expected_evidence": ["test command or screenshot", "review note", "integration report reference"],
 }
 
-COGNITIVE_AUDIT_NOTE_TEMPLATE = """# Cognitive Audit Note
-
+COGNITIVE_AUDIT_NOTE_TEMPLATE = """---
 audit_id: cogaudit_001
 session: docs_security_integration
 status: hypothesis_only
 evidence_strength: soft_hypothesis
+---
+
+# Cognitive Audit Note
 
 ## Hypotheses
 

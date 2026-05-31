@@ -3,8 +3,62 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "additionalProperties": true,
   "properties": {
-    "contract_id": {},
-    "contracts": {}
+    "contract_id": {
+      "pattern": "^[A-Za-z][A-Za-z0-9_.:-]*$",
+      "type": "string"
+    },
+    "contracts": {
+      "additionalProperties": {
+        "additionalProperties": true,
+        "properties": {
+          "allowed_reads": {
+            "items": {
+              "pattern": "^(?!/)(?!.*(^|/)\\.\\.(/|$)).+",
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "allowed_writes": {
+            "items": {
+              "pattern": "^(?!/)(?!.*(^|/)\\.\\.(/|$)).+",
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "default_posture": {
+            "enum": [
+              "least_privilege",
+              "read_only",
+              "review_required",
+              "manual_approval"
+            ],
+            "type": "string"
+          },
+          "denied": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "requires_approval": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "default_posture",
+          "allowed_reads",
+          "allowed_writes",
+          "requires_approval",
+          "denied"
+        ],
+        "type": "object"
+      },
+      "minProperties": 1,
+      "type": "object"
+    }
   },
   "required": [
     "contract_id",

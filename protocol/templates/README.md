@@ -37,4 +37,12 @@ Role and subagent templates:
 
 ## Optional Advanced Templates
 
-Advanced templates are copied only when a project intentionally uses advanced mode or manually chooses the relevant files. They cover verification blueprints, review routing, runtime profiles, capability contracts, signed skills, factory plans, scenario tests, runtime evidence events, capability requests, and cognitive audit notes.
+Advanced templates are copied only when a project intentionally uses advanced
+mode or manually chooses the relevant files. They cover verification
+blueprints, review routing, runtime profiles, capability contracts, signed
+skills, factory-style plans, scenario tests, runtime evidence events,
+capability requests, and cognitive audit notes.
+
+The shipped advanced templates are JSON-compatible YAML: valid YAML syntax with
+JSON-style formatting. This keeps them easy for agents and scripts to parse. A
+project may reformat them as idiomatic YAML without changing the artifact shape.

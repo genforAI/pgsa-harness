@@ -3,11 +3,34 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "additionalProperties": true,
   "properties": {
-    "contract_refs": {},
-    "expected_evidence": {},
-    "owner_session": {},
-    "scenario_id": {},
-    "steps": {}
+    "contract_refs": {
+      "items": {
+        "type": "string"
+      },
+      "minItems": 1,
+      "type": "array"
+    },
+    "expected_evidence": {
+      "items": {
+        "type": "string"
+      },
+      "minItems": 1,
+      "type": "array"
+    },
+    "owner_session": {
+      "type": "string"
+    },
+    "scenario_id": {
+      "pattern": "^[A-Za-z][A-Za-z0-9_.:-]*$",
+      "type": "string"
+    },
+    "steps": {
+      "items": {
+        "type": "string"
+      },
+      "minItems": 1,
+      "type": "array"
+    }
   },
   "required": [
     "scenario_id",

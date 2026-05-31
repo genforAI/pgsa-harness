@@ -3,12 +3,68 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "additionalProperties": true,
   "properties": {
-    "event_id": {},
-    "event_type": {},
-    "evidence_ref": {},
-    "session": {},
-    "status": {},
-    "timestamp": {}
+    "action": {
+      "type": "string"
+    },
+    "agent": {
+      "type": "string"
+    },
+    "allowed_by": {
+      "type": "string"
+    },
+    "contract_scope": {
+      "type": "string"
+    },
+    "event_id": {
+      "pattern": "^[A-Za-z][A-Za-z0-9_.:-]*$",
+      "type": "string"
+    },
+    "event_type": {
+      "pattern": "^[a-z][a-z0-9_]*(\\.[a-z][a-z0-9_]*)+$",
+      "type": "string"
+    },
+    "evidence_ref": {
+      "minLength": 1,
+      "type": "string"
+    },
+    "resource": {
+      "type": "string"
+    },
+    "risk": {
+      "enum": [
+        "low",
+        "medium",
+        "high",
+        "critical"
+      ],
+      "type": "string"
+    },
+    "session": {
+      "type": "string"
+    },
+    "status": {
+      "enum": [
+        "allowed",
+        "denied",
+        "blocked",
+        "observed",
+        "passed",
+        "failed",
+        "warning"
+      ],
+      "type": "string"
+    },
+    "timestamp": {
+      "anyOf": [
+        {
+          "format": "date-time",
+          "type": "string"
+        },
+        {
+          "const": "pending"
+        }
+      ]
+    }
   },
   "required": [
     "event_id",

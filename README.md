@@ -135,6 +135,20 @@ PYTHONPATH=tools/python python3 -m pgsa_cli.main --root examples/teamtask-projec
 The CLI is helper automation. It does not decide semantic truth, resolve merge
 conflicts, or replace agent judgment.
 
+For convenience, `--root` is accepted before or after the subcommand:
+
+```bash
+pgsa --root examples/teamtask-projectboard validate
+pgsa validate --root examples/teamtask-projectboard
+```
+
+Advanced artifacts default to warning-level validation because they are optional
+draft packs. Strict mode treats all advanced-pack warnings as blocking errors:
+
+```bash
+pgsa validate --root examples/teamtask-projectboard --strict-advanced
+```
+
 ## Example
 
 `examples/teamtask-projectboard/` contains a complete PGSA artifact layer. Start
@@ -159,6 +173,30 @@ visible and recoverable.
 PGSA Harness Core v1.1 is a local protocol release. Advanced packs are optional project-state files, not mandatory services. Current evidence is local
 architecture-protocol and embedded-example evidence only. It is not a Codex,
 Claude Code, Grok, OpenAI, Anthropic, or hosted-product benchmark.
+
+## Optional Advanced Packs
+
+Advanced packs are organized as optional layers so PGSA remains a project-state
+protocol, not a replacement for CI, sandboxing, hosted orchestration, security
+monitoring, or model interpretability:
+
+- core protocol: contracts, sessions, state summaries, ledger, merge proposals,
+  review gates, and integration reports;
+- harness packs: verification blueprints, scenario tests, review routing, and
+  factory-style planning;
+- runtime adapter specs: runtime evidence, capability contracts, signed skills,
+  and external runtime/security adapter records;
+- research notes: cognitive audit notes and NLA/ALM-style hypotheses.
+
+Advanced schemas intentionally describe artifact shapes and references. They do
+not make PGSA enforce runtime policy by itself.
+
+| Layer | Status | Purpose |
+| --- | --- | --- |
+| Core protocol | Required, stable | Project contracts, sessions, state, reviews, integration, ledger, and merge proposals. |
+| Advanced packs | Optional, draft | Verification, scenario, review-routing, runtime evidence, signed skills, and factory-style planning artifacts. |
+| Runtime adapters | Specs only | Interfaces for external tools that may provide runtime/security evidence. |
+| Research notes | Hypothesis only | Cognitive audit notes and related observations; never stronger than tests, runtime evidence, contracts, or review decisions. |
 
 ## License
 

@@ -15,6 +15,18 @@ Potentially sensitive files include:
 - `pgsa/integration/`
 - `pgsa/ledger/`
 - `pgsa/reports/`
+- `pgsa/gates/`
+- `pgsa/runtime/`
+- `pgsa/runtime/capability_requests/`
+- `pgsa/skills/`
+- `pgsa/evidence/`
+- `pgsa/factory/`
+- `pgsa/scenarios/`
+- `pgsa/audits/`
+
+Advanced artifact folders can contain operational assumptions, capability
+requests, runtime evidence references, review routing, or audit hypotheses. They
+should be reviewed before sharing a repository or report bundle.
 
 ## External agent runs
 

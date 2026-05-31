@@ -2,12 +2,20 @@ from __future__ import annotations
 
 import argparse
 import json
+import sys
 from pathlib import Path
 
 from pgsa_core.metrics.drift import drift_report, write_drift_report
 from pgsa_core.supervisor.context import continuation_prompt, export_context, read_session_harness, record_session_event
 from pgsa_core.templates.initializer import init_pgsa
 from pgsa_core.validators.artifacts import issues_to_dicts, validate
+
+
+def _apply_strict_advanced(issues):
+    for issue in issues:
+        if issue.category == "advanced_capability_state" and issue.severity == "warning":
+            issue.severity = "error"
+    return issues
 
 
 def cmd_init(args: argparse.Namespace) -> int:
@@ -27,6 +35,8 @@ def cmd_status(args: argparse.Namespace) -> int:
 
 def cmd_validate(args: argparse.Namespace) -> int:
     issues = validate(Path(args.root))
+    if args.strict_advanced:
+        _apply_strict_advanced(issues)
     print(json.dumps({"issues": issues_to_dicts(issues)}, indent=2))
     return 0 if not any(issue.severity == "error" for issue in issues) else 1
 
@@ -185,7 +195,9 @@ def build_parser() -> argparse.ArgumentParser:
     p.set_defaults(func=cmd_init)
 
     sub.add_parser("status").set_defaults(func=cmd_status)
-    sub.add_parser("validate").set_defaults(func=cmd_validate)
+    p = sub.add_parser("validate")
+    p.add_argument("--strict-advanced", action="store_true", help="treat optional advanced artifact warnings as errors")
+    p.set_defaults(func=cmd_validate)
     sub.add_parser("drift-report").set_defaults(func=cmd_drift_report)
     sub.add_parser("watch").set_defaults(func=cmd_watch)
 
@@ -241,9 +253,29 @@ def build_parser() -> argparse.ArgumentParser:
     return parser
 
 
+def _normalize_global_options(argv: list[str]) -> list[str]:
+    """Allow global --root before or after the subcommand."""
+    normalized = list(argv)
+    extracted: list[str] = []
+    index = 0
+    while index < len(normalized):
+        item = normalized[index]
+        if item == "--root" and index + 1 < len(normalized):
+            extracted.extend([item, normalized[index + 1]])
+            del normalized[index : index + 2]
+            continue
+        if item.startswith("--root="):
+            extracted.append(item)
+            del normalized[index]
+            continue
+        index += 1
+    return extracted + normalized
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = build_parser()
-    args = parser.parse_args(argv)
+    normalized = _normalize_global_options(sys.argv[1:] if argv is None else argv)
+    args = parser.parse_args(normalized)
     return args.func(args)
 
 

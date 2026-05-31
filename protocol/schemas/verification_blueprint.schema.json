@@ -3,11 +3,92 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "additionalProperties": true,
   "properties": {
-    "blueprint_id": {},
-    "contract_refs": {},
-    "gate_policy": {},
-    "required_checks": {},
-    "status": {}
+    "blueprint_id": {
+      "pattern": "^[A-Za-z][A-Za-z0-9_.:-]*$",
+      "type": "string"
+    },
+    "contract_refs": {
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "minItems": 1,
+      "type": "array"
+    },
+    "gate_policy": {
+      "additionalProperties": true,
+      "properties": {
+        "block_when": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "merge_ready_when": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        }
+      },
+      "type": "object"
+    },
+    "required_checks": {
+      "items": {
+        "additionalProperties": true,
+        "properties": {
+          "check_id": {
+            "pattern": "^[A-Za-z][A-Za-z0-9_.:-]*$",
+            "type": "string"
+          },
+          "command": {
+            "type": "string"
+          },
+          "contract_refs": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "evidence": {
+            "pattern": "^(?!/)(?!.*(^|/)\\.\\.(/|$)).+",
+            "type": "string"
+          },
+          "owner_session": {
+            "type": "string"
+          },
+          "type": {
+            "enum": [
+              "unit_test",
+              "integration_test",
+              "contract_check",
+              "project_check",
+              "scenario",
+              "manual_review",
+              "runtime_evidence",
+              "security_check"
+            ],
+            "type": "string"
+          }
+        },
+        "required": [
+          "check_id",
+          "owner_session",
+          "type"
+        ],
+        "type": "object"
+      },
+      "minItems": 1,
+      "type": "array"
+    },
+    "status": {
+      "enum": [
+        "draft",
+        "active",
+        "deprecated"
+      ],
+      "type": "string"
+    }
   },
   "required": [
     "blueprint_id",

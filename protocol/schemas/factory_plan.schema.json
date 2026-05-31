@@ -3,9 +3,66 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "additionalProperties": true,
   "properties": {
-    "factory_plan_id": {},
-    "status": {},
-    "tasks": {}
+    "factory_plan_id": {
+      "pattern": "^[A-Za-z][A-Za-z0-9_.:-]*$",
+      "type": "string"
+    },
+    "intake": {
+      "type": "string"
+    },
+    "status": {
+      "enum": [
+        "draft",
+        "active",
+        "blocked",
+        "complete",
+        "deprecated"
+      ],
+      "type": "string"
+    },
+    "tasks": {
+      "items": {
+        "additionalProperties": true,
+        "properties": {
+          "depends_on": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "outputs": {
+            "items": {
+              "pattern": "^(?!/)(?!.*(^|/)\\.\\.(/|$)).+",
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "required_evidence": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "session": {
+            "type": "string"
+          },
+          "task_id": {
+            "pattern": "^[A-Za-z][A-Za-z0-9_.:-]*$",
+            "type": "string"
+          }
+        },
+        "required": [
+          "task_id",
+          "session",
+          "depends_on",
+          "outputs",
+          "required_evidence"
+        ],
+        "type": "object"
+      },
+      "minItems": 1,
+      "type": "array"
+    }
   },
   "required": [
     "factory_plan_id",

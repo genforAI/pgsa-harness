@@ -8,6 +8,12 @@ from typing import Any
 
 from pgsa_core.io import read_jsonl, read_structured
 
+ARTIFACT_ID_RE = re.compile(r"^[A-Za-z][A-Za-z0-9_.:-]*$")
+EVENT_TYPE_RE = re.compile(r"^[a-z][a-z0-9_]*(\.[a-z][a-z0-9_]*)+$")
+RISK_LEVELS = {"low", "medium", "high", "critical"}
+EVIDENCE_STATUSES = {"allowed", "denied", "blocked", "observed", "passed", "failed", "warning"}
+DEFAULT_POSTURES = {"least_privilege", "read_only", "review_required", "manual_approval"}
+
 
 @dataclass
 class ValidationIssue:
@@ -67,6 +73,108 @@ def _markdown_items(value: str) -> list[str]:
         for item in re.split(r"[, ]+", value)
         if item.strip().strip("'\"")
     ]
+
+
+def _looks_like_id(value: Any) -> bool:
+    return isinstance(value, str) and bool(ARTIFACT_ID_RE.match(value))
+
+
+def _looks_like_event_type(value: Any) -> bool:
+    return isinstance(value, str) and bool(EVENT_TYPE_RE.match(value))
+
+
+def _valid_rel_path(value: Any) -> bool:
+    if not isinstance(value, str) or not value.strip():
+        return False
+    if value.startswith(("/", "~")):
+        return False
+    parts = [part for part in value.replace("\\", "/").split("/") if part]
+    return ".." not in parts
+
+
+def _warn_if_bad_id(issues: list[ValidationIssue], category: str, path: Path, field: str, value: Any) -> None:
+    if not _looks_like_id(value):
+        issues.append(_issue(category, "warning", f"{field} should be a stable artifact id", path))
+
+
+def _warn_if_bad_rel_path(issues: list[ValidationIssue], category: str, path: Path, field: str, value: Any) -> None:
+    if not _valid_rel_path(value):
+        issues.append(_issue(category, "warning", f"{field} should be a relative project artifact path", path))
+
+
+def _warn_if_bad_enum(
+    issues: list[ValidationIssue],
+    category: str,
+    path: Path,
+    field: str,
+    value: Any,
+    allowed: set[str],
+) -> None:
+    if not isinstance(value, str) or value.lower() not in allowed:
+        issues.append(_issue(category, "warning", f"{field} should be one of {sorted(allowed)}", path))
+
+
+def _duplicate_values(values: list[Any]) -> list[str]:
+    seen: set[str] = set()
+    duplicates: set[str] = set()
+    for value in values:
+        if not isinstance(value, str) or not value:
+            continue
+        if value in seen:
+            duplicates.add(value)
+        seen.add(value)
+    return sorted(duplicates)
+
+
+def _append_duplicate_id_issues(
+    issues: list[ValidationIssue],
+    category: str,
+    path: Path,
+    field: str,
+    values: list[Any],
+) -> None:
+    for duplicate in _duplicate_values(values):
+        issues.append(_issue(category, "warning", f"duplicate {field}: {duplicate}", path))
+
+
+def _factory_plan_has_cycle(tasks: list[dict[str, Any]]) -> bool:
+    graph = {
+        task.get("task_id"): [dep for dep in _as_list(task.get("depends_on")) if isinstance(dep, str)]
+        for task in tasks
+        if isinstance(task.get("task_id"), str)
+    }
+    visiting: set[str] = set()
+    visited: set[str] = set()
+
+    def visit(task_id: str) -> bool:
+        if task_id in visiting:
+            return True
+        if task_id in visited:
+            return False
+        visiting.add(task_id)
+        for dep in graph.get(task_id, []):
+            if dep in graph and visit(dep):
+                return True
+        visiting.remove(task_id)
+        visited.add(task_id)
+        return False
+
+    return any(visit(task_id) for task_id in list(graph))
+
+
+def _parse_frontmatter(text: str) -> dict[str, str] | None:
+    lines = text.splitlines()
+    if not lines or lines[0].strip() != "---":
+        return None
+    data: dict[str, str] = {}
+    for line in lines[1:]:
+        stripped = line.strip()
+        if stripped == "---":
+            return data
+        if ":" in line:
+            key, value = line.split(":", 1)
+            data[key.strip()] = value.strip()
+    return None
 
 
 def validate(root: Path) -> list[ValidationIssue]:
@@ -232,89 +340,195 @@ def _validate_advanced_artifacts(pgsa: Path, sessions: dict[str, Any], issues: l
 
     blueprint = _read_optional_structured(pgsa / "gates" / "verification_blueprint.yaml", issues, category)
     if blueprint is not None:
+        blueprint_path = pgsa / "gates" / "verification_blueprint.yaml"
+        _warn_if_bad_id(issues, category, blueprint_path, "blueprint_id", blueprint.get("blueprint_id"))
+        _warn_if_bad_enum(issues, category, blueprint_path, "status", blueprint.get("status"), {"draft", "active", "deprecated"})
         for field in ["blueprint_id", "status", "contract_refs", "required_checks", "gate_policy"]:
             if field not in blueprint:
-                issues.append(_issue(category, "warning", f"verification blueprint missing {field}", pgsa / "gates" / "verification_blueprint.yaml"))
+                issues.append(_issue(category, "warning", f"verification blueprint missing {field}", blueprint_path))
+        for contract_ref in _as_list(blueprint.get("contract_refs")):
+            if not isinstance(contract_ref, str) or not contract_ref:
+                issues.append(_issue(category, "warning", "verification blueprint contract_refs should be non-empty strings", blueprint_path))
         for check in _as_list(blueprint.get("required_checks")):
             if not isinstance(check, dict):
-                issues.append(_issue(category, "warning", "verification blueprint check should be an object", pgsa / "gates" / "verification_blueprint.yaml"))
+                issues.append(_issue(category, "warning", "verification blueprint check should be an object", blueprint_path))
                 continue
+            _warn_if_bad_id(issues, category, blueprint_path, "verification check_id", check.get("check_id"))
+            if "evidence" in check:
+                _warn_if_bad_rel_path(issues, category, blueprint_path, "verification evidence", check.get("evidence"))
             if check.get("owner_session") not in session_names:
-                issues.append(_issue(category, "warning", f"verification check owner session unknown: {check.get('owner_session')}", pgsa / "gates" / "verification_blueprint.yaml"))
+                issues.append(_issue(category, "warning", f"verification check owner session unknown: {check.get('owner_session')}", blueprint_path))
+        _append_duplicate_id_issues(
+            issues,
+            category,
+            blueprint_path,
+            "verification check_id",
+            [check.get("check_id") for check in _as_list(blueprint.get("required_checks")) if isinstance(check, dict)],
+        )
 
     router = _read_optional_structured(pgsa / "gates" / "review_router.yaml", issues, category)
     if router is not None:
+        router_path = pgsa / "gates" / "review_router.yaml"
+        _warn_if_bad_id(issues, category, router_path, "router_id", router.get("router_id"))
+        risk_tiers = router.get("risk_tiers", {})
+        if isinstance(risk_tiers, dict):
+            for risk in risk_tiers:
+                if risk not in RISK_LEVELS:
+                    issues.append(_issue(category, "warning", f"review router has unknown risk tier {risk}", router_path))
         for field in ["router_id", "risk_tiers", "routing_rules"]:
             if field not in router:
-                issues.append(_issue(category, "warning", f"review router missing {field}", pgsa / "gates" / "review_router.yaml"))
+                issues.append(_issue(category, "warning", f"review router missing {field}", router_path))
         for rule in _as_list(router.get("routing_rules")):
             if not isinstance(rule, dict) or not rule.get("route"):
-                issues.append(_issue(category, "warning", "review router rule missing route", pgsa / "gates" / "review_router.yaml"))
+                issues.append(_issue(category, "warning", "review router rule missing route", router_path))
+                continue
+            _warn_if_bad_id(issues, category, router_path, "review router rule_id", rule.get("rule_id"))
+            if "blocking" in rule and not isinstance(rule.get("blocking"), bool):
+                issues.append(_issue(category, "warning", "review router blocking should be boolean", router_path))
 
     runtime_profile = _read_optional_structured(pgsa / "runtime" / "session_runtime_profile.yaml", issues, category)
     if runtime_profile is not None:
+        profile_path = pgsa / "runtime" / "session_runtime_profile.yaml"
+        _warn_if_bad_id(issues, category, profile_path, "profile_id", runtime_profile.get("profile_id"))
         profiles = runtime_profile.get("profiles", {})
         if not isinstance(profiles, dict) or not profiles:
-            issues.append(_issue(category, "warning", "runtime profile has no profiles", pgsa / "runtime" / "session_runtime_profile.yaml"))
+            issues.append(_issue(category, "warning", "runtime profile has no profiles", profile_path))
         for session, profile in profiles.items():
             if session not in session_names:
-                issues.append(_issue(category, "warning", f"runtime profile references unknown session {session}", pgsa / "runtime" / "session_runtime_profile.yaml"))
+                issues.append(_issue(category, "warning", f"runtime profile references unknown session {session}", profile_path))
             if isinstance(profile, dict):
                 for field in ["allowed", "denied", "requires_approval", "evidence_outputs"]:
                     if field not in profile:
-                        issues.append(_issue(category, "warning", f"runtime profile {session} missing {field}", pgsa / "runtime" / "session_runtime_profile.yaml"))
+                        issues.append(_issue(category, "warning", f"runtime profile {session} missing {field}", profile_path))
+                allowed = profile.get("allowed", {})
+                if isinstance(allowed, dict):
+                    for field in ["read", "write"]:
+                        for rel in _as_list(allowed.get(field)):
+                            _warn_if_bad_rel_path(issues, category, profile_path, f"runtime allowed.{field}", rel)
+                for rel in _as_list(profile.get("evidence_outputs")):
+                    _warn_if_bad_rel_path(issues, category, profile_path, "runtime evidence_outputs", rel)
 
     capability = _read_optional_structured(pgsa / "runtime" / "capability_contract.yaml", issues, category)
     if capability is not None:
+        capability_path = pgsa / "runtime" / "capability_contract.yaml"
+        _warn_if_bad_id(issues, category, capability_path, "contract_id", capability.get("contract_id"))
         contracts = capability.get("contracts", {})
         if not isinstance(contracts, dict) or not contracts:
-            issues.append(_issue(category, "warning", "capability contract has no session contracts", pgsa / "runtime" / "capability_contract.yaml"))
-        for session in contracts:
+            issues.append(_issue(category, "warning", "capability contract has no session contracts", capability_path))
+        for session, contract in contracts.items():
             if session not in session_names:
-                issues.append(_issue(category, "warning", f"capability contract references unknown session {session}", pgsa / "runtime" / "capability_contract.yaml"))
+                issues.append(_issue(category, "warning", f"capability contract references unknown session {session}", capability_path))
+            if not isinstance(contract, dict):
+                continue
+            _warn_if_bad_enum(issues, category, capability_path, f"capability contract {session} default_posture", contract.get("default_posture"), DEFAULT_POSTURES)
+            for field in ["allowed_reads", "allowed_writes"]:
+                for rel in _as_list(contract.get(field)):
+                    _warn_if_bad_rel_path(issues, category, capability_path, f"capability contract {field}", rel)
 
     skills = _read_optional_structured(pgsa / "skills" / "signed_skill_manifest.yaml", issues, category)
     if skills is not None:
+        skills_path = pgsa / "skills" / "signed_skill_manifest.yaml"
+        _warn_if_bad_id(issues, category, skills_path, "manifest_id", skills.get("manifest_id"))
         for skill in _as_list(skills.get("skills")):
             if not isinstance(skill, dict):
-                issues.append(_issue(category, "warning", "skill manifest entry should be an object", pgsa / "skills" / "signed_skill_manifest.yaml"))
+                issues.append(_issue(category, "warning", "skill manifest entry should be an object", skills_path))
                 continue
             for field in ["skill_id", "version", "status", "applies_to", "signed_by"]:
                 if field not in skill:
-                    issues.append(_issue(category, "warning", f"skill manifest entry missing {field}", pgsa / "skills" / "signed_skill_manifest.yaml"))
+                    issues.append(_issue(category, "warning", f"skill manifest entry missing {field}", skills_path))
+            _warn_if_bad_id(issues, category, skills_path, "skill_id", skill.get("skill_id"))
+            _warn_if_bad_enum(issues, category, skills_path, "skill risk", skill.get("risk"), RISK_LEVELS)
+            _warn_if_bad_enum(issues, category, skills_path, "skill status", skill.get("status"), {"active", "draft", "deprecated", "disabled"})
             for session in _as_list(skill.get("applies_to")):
                 if session not in session_names:
-                    issues.append(_issue(category, "warning", f"skill applies to unknown session {session}", pgsa / "skills" / "signed_skill_manifest.yaml"))
+                    issues.append(_issue(category, "warning", f"skill applies to unknown session {session}", skills_path))
+            for rel in _as_list(skill.get("depends_on")):
+                _warn_if_bad_rel_path(issues, category, skills_path, "skill depends_on", rel)
+        _append_duplicate_id_issues(
+            issues,
+            category,
+            skills_path,
+            "skill_id",
+            [skill.get("skill_id") for skill in _as_list(skills.get("skills")) if isinstance(skill, dict)],
+        )
 
     factory = _read_optional_structured(pgsa / "factory" / "factory_plan.yaml", issues, category)
     if factory is not None:
-        task_ids = {task.get("task_id") for task in _as_list(factory.get("tasks")) if isinstance(task, dict)}
+        factory_path = pgsa / "factory" / "factory_plan.yaml"
+        _warn_if_bad_id(issues, category, factory_path, "factory_plan_id", factory.get("factory_plan_id"))
+        _warn_if_bad_enum(issues, category, factory_path, "factory status", factory.get("status"), {"draft", "active", "blocked", "complete", "deprecated"})
+        tasks = [task for task in _as_list(factory.get("tasks")) if isinstance(task, dict)]
+        task_ids = {task.get("task_id") for task in tasks}
+        _append_duplicate_id_issues(issues, category, factory_path, "factory task_id", [task.get("task_id") for task in tasks])
+        if _factory_plan_has_cycle(tasks):
+            issues.append(_issue(category, "warning", "factory task graph contains a dependency cycle", factory_path))
         for task in _as_list(factory.get("tasks")):
             if not isinstance(task, dict):
-                issues.append(_issue(category, "warning", "factory task should be an object", pgsa / "factory" / "factory_plan.yaml"))
+                issues.append(_issue(category, "warning", "factory task should be an object", factory_path))
                 continue
+            _warn_if_bad_id(issues, category, factory_path, "factory task_id", task.get("task_id"))
             if task.get("session") not in session_names:
-                issues.append(_issue(category, "warning", f"factory task references unknown session {task.get('session')}", pgsa / "factory" / "factory_plan.yaml"))
+                issues.append(_issue(category, "warning", f"factory task references unknown session {task.get('session')}", factory_path))
             for dep in _as_list(task.get("depends_on")):
                 if dep not in task_ids:
-                    issues.append(_issue(category, "warning", f"factory task dependency unknown: {dep}", pgsa / "factory" / "factory_plan.yaml"))
+                    issues.append(_issue(category, "warning", f"factory task dependency unknown: {dep}", factory_path))
+            for rel in _as_list(task.get("outputs")):
+                _warn_if_bad_rel_path(issues, category, factory_path, "factory task outputs", rel)
 
     for scenario in (pgsa / "scenarios").glob("*.yaml"):
         data = _read_optional_structured(scenario, issues, category)
         if data is None:
             continue
+        _warn_if_bad_id(issues, category, scenario, "scenario_id", data.get("scenario_id"))
         for field in ["scenario_id", "owner_session", "contract_refs", "steps", "expected_evidence"]:
             if field not in data:
                 issues.append(_issue(category, "warning", f"scenario test missing {field}", scenario))
         if data.get("owner_session") not in session_names:
             issues.append(_issue(category, "warning", f"scenario owner session unknown: {data.get('owner_session')}", scenario))
+        if not _as_list(data.get("steps")):
+            issues.append(_issue(category, "warning", "scenario test should include at least one step", scenario))
+        if not _as_list(data.get("expected_evidence")):
+            issues.append(_issue(category, "warning", "scenario test should include expected evidence", scenario))
+    scenario_ids = []
+    for scenario in (pgsa / "scenarios").glob("*.yaml"):
+        data = _read_optional_structured(scenario, issues, category)
+        if isinstance(data, dict):
+            scenario_ids.append(data.get("scenario_id"))
+    _append_duplicate_id_issues(issues, category, pgsa / "scenarios", "scenario_id", scenario_ids)
 
+    event_ids = []
     for event in read_jsonl(pgsa / "evidence" / "runtime_evidence.jsonl"):
+        event_ids.append(event.get("event_id"))
         for field in ["event_id", "timestamp", "session", "event_type", "status", "evidence_ref"]:
             if field not in event:
                 issues.append(_issue(category, "warning", f"runtime evidence event missing {field}", pgsa / "evidence" / "runtime_evidence.jsonl"))
+        evidence_path = pgsa / "evidence" / "runtime_evidence.jsonl"
+        _warn_if_bad_id(issues, category, evidence_path, "runtime evidence event_id", event.get("event_id"))
+        if not _looks_like_event_type(event.get("event_type")):
+            issues.append(_issue(category, "warning", "runtime evidence event_type should be namespaced like runtime.file_read", evidence_path))
+        _warn_if_bad_enum(issues, category, evidence_path, "runtime evidence status", event.get("status"), EVIDENCE_STATUSES)
+        if "risk" in event:
+            _warn_if_bad_enum(issues, category, evidence_path, "runtime evidence risk", event.get("risk"), RISK_LEVELS)
+        if "resource" in event and event.get("resource") not in {"external", "none"}:
+            _warn_if_bad_rel_path(issues, category, evidence_path, "runtime evidence resource", event.get("resource"))
         if event.get("session") not in session_names and event.get("session") != "system":
             issues.append(_issue(category, "warning", f"runtime evidence references unknown session {event.get('session')}", pgsa / "evidence" / "runtime_evidence.jsonl"))
+    _append_duplicate_id_issues(issues, category, pgsa / "evidence" / "runtime_evidence.jsonl", "runtime evidence event_id", event_ids)
+
+    audit_path = pgsa / "audits" / "cognitive_audit_note.md"
+    if audit_path.exists():
+        frontmatter = _parse_frontmatter(audit_path.read_text(encoding="utf-8"))
+        if frontmatter is None:
+            issues.append(_issue(category, "warning", "cognitive audit note missing YAML frontmatter", audit_path))
+        else:
+            for field in ["audit_id", "session", "status", "evidence_strength"]:
+                if field not in frontmatter:
+                    issues.append(_issue(category, "warning", f"cognitive audit note missing {field}", audit_path))
+            _warn_if_bad_id(issues, category, audit_path, "cognitive audit audit_id", frontmatter.get("audit_id"))
+            if frontmatter.get("session") not in session_names:
+                issues.append(_issue(category, "warning", f"cognitive audit references unknown session {frontmatter.get('session')}", audit_path))
+            _warn_if_bad_enum(issues, category, audit_path, "cognitive audit status", frontmatter.get("status"), {"draft", "active", "deprecated", "hypothesis_only"})
+            _warn_if_bad_enum(issues, category, audit_path, "cognitive audit evidence_strength", frontmatter.get("evidence_strength"), {"hypothesis", "soft_hypothesis", "weak", "moderate", "strong"})
 
 
 def issues_to_dicts(issues: list[ValidationIssue]) -> list[dict[str, str]]:

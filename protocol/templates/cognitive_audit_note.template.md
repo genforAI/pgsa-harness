@@ -1,9 +1,11 @@
-# Cognitive Audit Note
-
+---
 audit_id: cogaudit_001
-session: reviewer
+session: docs_security_integration
 status: hypothesis_only
 evidence_strength: soft_hypothesis
+---
+
+# Cognitive Audit Note
 
 ## Hypotheses
 

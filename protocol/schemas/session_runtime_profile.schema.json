@@ -3,8 +3,80 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "additionalProperties": true,
   "properties": {
-    "profile_id": {},
-    "profiles": {}
+    "profile_id": {
+      "pattern": "^[A-Za-z][A-Za-z0-9_.:-]*$",
+      "type": "string"
+    },
+    "profiles": {
+      "additionalProperties": {
+        "additionalProperties": true,
+        "properties": {
+          "allowed": {
+            "additionalProperties": true,
+            "properties": {
+              "commands": {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              "network": {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              "read": {
+                "items": {
+                  "pattern": "^(?!/)(?!.*(^|/)\\.\\.(/|$)).+",
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              "write": {
+                "items": {
+                  "pattern": "^(?!/)(?!.*(^|/)\\.\\.(/|$)).+",
+                  "type": "string"
+                },
+                "type": "array"
+              }
+            },
+            "type": "object"
+          },
+          "denied": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "evidence_outputs": {
+            "items": {
+              "pattern": "^(?!/)(?!.*(^|/)\\.\\.(/|$)).+",
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "requires_approval": {
+            "additionalProperties": {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            "type": "object"
+          }
+        },
+        "required": [
+          "allowed",
+          "denied",
+          "requires_approval",
+          "evidence_outputs"
+        ],
+        "type": "object"
+      },
+      "minProperties": 1,
+      "type": "object"
+    }
   },
   "required": [
     "profile_id",

@@ -3,18 +3,45 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "additionalProperties": true,
   "properties": {
-    "audit_id": {},
-    "evidence_strength": {},
-    "hypotheses": {},
-    "session": {},
-    "status": {}
+    "audit_id": {
+      "pattern": "^[A-Za-z][A-Za-z0-9_.:-]*$",
+      "type": "string"
+    },
+    "evidence_strength": {
+      "enum": [
+        "hypothesis",
+        "soft_hypothesis",
+        "weak",
+        "moderate",
+        "strong"
+      ],
+      "type": "string"
+    },
+    "hypotheses": {
+      "items": {
+        "type": "string"
+      },
+      "minItems": 1,
+      "type": "array"
+    },
+    "session": {
+      "type": "string"
+    },
+    "status": {
+      "enum": [
+        "draft",
+        "active",
+        "hypothesis_only",
+        "deprecated"
+      ],
+      "type": "string"
+    }
   },
   "required": [
     "audit_id",
     "session",
     "status",
-    "evidence_strength",
-    "hypotheses"
+    "evidence_strength"
   ],
   "title": "PGSA Cognitive Audit Note",
   "type": "object"
