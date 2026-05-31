@@ -1,0 +1,12 @@
+{
+  "agent": "agent_id",
+  "decision_owner": "docs_security_integration",
+  "expires_at": "pending",
+  "reason": "needed to reproduce issue",
+  "request_id": "capreq_001",
+  "requested_capability": "read:.env",
+  "risk": "high",
+  "session": "backend",
+  "status": "pending",
+  "timestamp": "pending"
+}

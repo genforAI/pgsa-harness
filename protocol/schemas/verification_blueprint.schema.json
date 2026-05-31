@@ -1,0 +1,21 @@
+{
+  "$id": "https://pgsa.dev/schemas/verification_blueprint.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": true,
+  "properties": {
+    "blueprint_id": {},
+    "contract_refs": {},
+    "gate_policy": {},
+    "required_checks": {},
+    "status": {}
+  },
+  "required": [
+    "blueprint_id",
+    "status",
+    "contract_refs",
+    "required_checks",
+    "gate_policy"
+  ],
+  "title": "PGSA Verification Blueprint",
+  "type": "object"
+}

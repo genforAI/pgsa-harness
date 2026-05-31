@@ -1,0 +1,23 @@
+{
+  "$id": "https://pgsa.dev/schemas/runtime_evidence_event.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": true,
+  "properties": {
+    "event_id": {},
+    "event_type": {},
+    "evidence_ref": {},
+    "session": {},
+    "status": {},
+    "timestamp": {}
+  },
+  "required": [
+    "event_id",
+    "timestamp",
+    "session",
+    "event_type",
+    "status",
+    "evidence_ref"
+  ],
+  "title": "PGSA Runtime Evidence Event",
+  "type": "object"
+}

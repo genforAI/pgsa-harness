@@ -1,0 +1,16 @@
+role_id: frontend-ui
+description: Owns UI behavior, component assumptions, and API consumption.
+scope:
+  - frontend UI
+  - shared components
+  - API consumers
+external_bindings:
+  agent_protocol: protocol/SKILL.md
+must_update:
+  - pgsa/state/frontend_ui.summary.md
+  - pgsa/reviews/frontend_review.md
+  - pgsa/ledger/coherence_ledger.jsonl
+escalates_when:
+  - UI assumptions no longer match API contracts
+  - shared component behavior changes
+  - docs or integration readiness become stale

@@ -1,0 +1,15 @@
+{
+  "$id": "https://pgsa.dev/schemas/session_runtime_profile.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": true,
+  "properties": {
+    "profile_id": {},
+    "profiles": {}
+  },
+  "required": [
+    "profile_id",
+    "profiles"
+  ],
+  "title": "PGSA Session Runtime Profile",
+  "type": "object"
+}

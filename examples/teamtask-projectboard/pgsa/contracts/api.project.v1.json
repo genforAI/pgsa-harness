@@ -4,15 +4,20 @@
     "docs describe display_name",
     "permission rule is reflected in UI"
   ],
+  "boundary_type": "api_response",
   "breaking_change": false,
+  "changed_fields": [],
   "consumer_sessions": [
     "frontend_components",
     "docs_security_integration"
   ],
   "contract_id": "api.project.v1",
   "endpoint": "GET /api/projects/:id",
+  "last_updated_at": "2026-05-30T00:00:00Z",
   "last_updated_by": "backend",
+  "open_merge_proposals": [],
   "owner_session": "backend",
+  "producer_session": "backend",
   "requires_review": [
     "frontend_components",
     "docs_security_integration"
@@ -23,5 +28,10 @@
     "project_id": "string",
     "team_members": "array"
   },
-  "status": "accepted"
+  "review_state": {
+    "docs_security_integration": "accepted",
+    "frontend_components": "accepted"
+  },
+  "status": "accepted",
+  "version": "1.0.0"
 }

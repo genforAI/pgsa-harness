@@ -1,0 +1,17 @@
+{
+  "contract_refs": [
+    "api.project.v1"
+  ],
+  "expected_evidence": [
+    "test command or screenshot",
+    "review note",
+    "integration report reference"
+  ],
+  "owner_session": "docs_security_integration",
+  "scenario_id": "project.acceptance.v1",
+  "steps": [
+    "Open the primary user flow",
+    "Exercise the changed contract surface",
+    "Capture pass/fail evidence"
+  ]
+}

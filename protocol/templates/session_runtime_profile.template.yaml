@@ -1,0 +1,42 @@
+{
+  "profile_id": "project.session_runtime.v1",
+  "profiles": {
+    "backend": {
+      "allowed": {
+        "commands": [
+          "npm test"
+        ],
+        "network": [
+          "none"
+        ],
+        "read": [
+          "src/**",
+          "pgsa/contracts/**",
+          "pgsa/state/**"
+        ],
+        "write": [
+          "src/**",
+          "pgsa/state/backend.summary.md",
+          "pgsa/contracts/**",
+          "pgsa/ledger/pending/**"
+        ]
+      },
+      "denied": [
+        "~/.ssh/**",
+        "~/.aws/**"
+      ],
+      "evidence_outputs": [
+        "pgsa/evidence/runtime_evidence.jsonl"
+      ],
+      "requires_approval": {
+        "read": [
+          ".env",
+          "secrets/**"
+        ],
+        "write": [
+          "src/auth/**"
+        ]
+      }
+    }
+  }
+}

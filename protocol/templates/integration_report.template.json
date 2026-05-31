@@ -1,0 +1,17 @@
+{
+  "status": "ready",
+  "blocking_issues": [],
+  "open_merge_proposals": [],
+  "session_readiness": {
+    "backend": "ready",
+    "frontend_components": "ready",
+    "docs_security_integration": "ready"
+  },
+  "contract_review_state": {
+    "api.project.v1": "accepted"
+  },
+  "tests_passed": null,
+  "contract_violations": 0,
+  "integration_failures": 0,
+  "notes": "Initial scaffold."
+}

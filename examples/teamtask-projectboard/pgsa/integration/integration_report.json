@@ -1,8 +1,17 @@
 {
   "blocking_issues": [],
+  "contract_review_state": {
+    "api.project.v1": "accepted"
+  },
   "contract_violations": 0,
   "integration_failures": 0,
   "notes": "Initial scaffold.",
-  "status": "pending",
+  "open_merge_proposals": [],
+  "session_readiness": {
+    "backend": "ready",
+    "docs_security_integration": "ready",
+    "frontend_components": "ready"
+  },
+  "status": "ready",
   "tests_passed": null
 }

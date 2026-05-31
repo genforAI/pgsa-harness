@@ -1,0 +1,14 @@
+{
+  "action": "read",
+  "agent": "agent_id",
+  "allowed_by": "capability_contract.v1",
+  "contract_scope": "api.project.v1",
+  "event_id": "runtime_evt_001",
+  "event_type": "runtime.file_read",
+  "evidence_ref": "external-log-or-local-summary",
+  "resource": "src/example.js",
+  "risk": "low",
+  "session": "backend",
+  "status": "allowed",
+  "timestamp": "pending"
+}

@@ -1,0 +1,29 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "PGSA Merge Proposal",
+  "type": "object",
+  "required": [
+    "status",
+    "conflict_type",
+    "decision_owner",
+    "producer_session",
+    "consumer_sessions",
+    "changed_contracts",
+    "conflict_summary",
+    "integration_readiness"
+  ],
+  "properties": {
+    "status": {"type": "string"},
+    "conflict_type": {"type": "string"},
+    "decision_owner": {"type": "string"},
+    "producer_session": {"type": "string"},
+    "consumer_sessions": {"type": "array", "items": {"type": "string"}},
+    "changed_contracts": {"type": "array", "items": {"type": "string"}},
+    "affected_files": {"type": "array", "items": {"type": "string"}},
+    "conflict_summary": {"type": "string"},
+    "resolution_options": {"type": "array", "items": {"type": "string"}},
+    "selected_resolution": {"type": "string"},
+    "integration_readiness": {"type": "string"}
+  },
+  "additionalProperties": true
+}

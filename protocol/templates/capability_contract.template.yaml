@@ -1,0 +1,28 @@
+{
+  "contract_id": "project.capability.v1",
+  "contracts": {
+    "backend": {
+      "allowed_reads": [
+        "src/**",
+        "pgsa/contracts/**",
+        "pgsa/state/**"
+      ],
+      "allowed_writes": [
+        "src/**",
+        "pgsa/state/backend.summary.md",
+        "pgsa/contracts/**",
+        "pgsa/ledger/pending/**"
+      ],
+      "default_posture": "least_privilege",
+      "denied": [
+        "~/.ssh/**",
+        "~/.aws/**"
+      ],
+      "requires_approval": [
+        ".env",
+        "secrets/**",
+        "production credentials"
+      ]
+    }
+  }
+}

@@ -1,0 +1,31 @@
+{
+  "contract_id": "api.project.v1",
+  "version": "1.0.0",
+  "boundary_type": "api_response",
+  "owner_session": "backend",
+  "producer_session": "backend",
+  "consumer_sessions": ["frontend_components", "docs_security_integration"],
+  "status": "accepted",
+  "endpoint": "GET /api/projects/:id",
+  "response_shape": {
+    "project_id": "string",
+    "display_name": "string",
+    "team_members": "array",
+    "permissions": "object"
+  },
+  "breaking_change": false,
+  "changed_fields": [],
+  "acceptance_tests": [
+    "frontend consumes project_id",
+    "docs describe display_name",
+    "permission rule is reflected in UI"
+  ],
+  "requires_review": ["frontend_components", "docs_security_integration"],
+  "review_state": {
+    "frontend_components": "accepted",
+    "docs_security_integration": "accepted"
+  },
+  "open_merge_proposals": [],
+  "last_updated_by": "backend",
+  "last_updated_at": "2026-05-30T00:00:00Z"
+}

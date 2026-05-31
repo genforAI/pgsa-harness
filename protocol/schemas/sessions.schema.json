@@ -1,0 +1,37 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "PGSA Sessions",
+  "type": "object",
+  "required": ["sessions"],
+  "properties": {
+    "sessions": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "required": [
+          "role",
+          "status",
+          "owner_scope",
+          "produces",
+          "consumes",
+          "must_read",
+          "must_update",
+          "handoff_to"
+        ],
+        "properties": {
+          "role": {"type": "string"},
+          "status": {"type": "string"},
+          "owner_scope": {"type": "array", "items": {"type": "string"}},
+          "produces": {"type": "array", "items": {"type": "string"}},
+          "consumes": {"type": "array", "items": {"type": "string"}},
+          "must_read": {"type": "array", "items": {"type": "string"}},
+          "must_update": {"type": "array", "items": {"type": "string"}},
+          "handoff_to": {"type": "array", "items": {"type": "string"}},
+          "escalation_policy": {"type": "object"}
+        },
+        "additionalProperties": true
+      }
+    }
+  },
+  "additionalProperties": false
+}

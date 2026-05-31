@@ -1,0 +1,107 @@
+sessions:
+  backend:
+    role: backend-api
+    status: active
+    owner_scope:
+      - backend API
+      - schema
+      - permission logic
+    produces:
+      - contracts/api.project.v1.json
+      - state/backend.summary.md
+    consumes:
+      - integration/integration_report.json
+    must_read:
+      - project.yaml
+      - sessions.yaml
+      - contracts/
+      - state/
+      - merge_proposals/
+    must_update:
+      - harness/backend.md
+      - state/backend.summary.md
+      - contracts/api.project.v1.json
+      - ledger/coherence_ledger.jsonl
+      - ledger/pending/
+    handoff_to:
+      - frontend_components
+      - docs_security_integration
+    escalation_policy:
+      create_merge_proposal_when:
+        - response shape changes
+        - permission behavior changes
+        - consumer compatibility is unknown
+      block_integration_when:
+        - required consumer review is missing
+  frontend_components:
+    role: frontend-ui
+    status: active
+    owner_scope:
+      - frontend UI
+      - API consumption
+      - shared components
+    produces:
+      - state/frontend_components.summary.md
+      - reviews/frontend_components_review.md
+    consumes:
+      - contracts/api.project.v1.json
+      - integration/integration_report.json
+    must_read:
+      - project.yaml
+      - sessions.yaml
+      - contracts/
+      - state/backend.summary.md
+      - merge_proposals/
+    must_update:
+      - harness/frontend_components.md
+      - state/frontend_components.summary.md
+      - reviews/frontend_components_review.md
+      - ledger/coherence_ledger.jsonl
+      - ledger/pending/
+    handoff_to:
+      - docs_security_integration
+    escalation_policy:
+      create_merge_proposal_when:
+        - UI assumptions no longer match a contract
+        - shared component behavior changes consumers
+      block_integration_when:
+        - contract review is not accepted
+  docs_security_integration:
+    role: integration-review
+    status: active
+    owner_scope:
+      - docs
+      - security checklist
+      - integration readiness
+    produces:
+      - state/docs_security_integration.summary.md
+      - reviews/security_review.md
+      - integration/integration_report.json
+      - reports/drift_report.json
+    consumes:
+      - contracts/
+      - reviews/
+      - merge_proposals/
+      - state/
+    must_read:
+      - project.yaml
+      - sessions.yaml
+      - contracts/
+      - reviews/
+      - state/
+      - merge_proposals/
+      - ledger/coherence_ledger.jsonl
+    must_update:
+      - harness/docs_security_integration.md
+      - state/docs_security_integration.summary.md
+      - reviews/security_review.md
+      - integration/integration_report.json
+      - ledger/coherence_ledger.jsonl
+    handoff_to: []
+    escalation_policy:
+      create_merge_proposal_when:
+        - contracts and consumers disagree
+        - docs or security assumptions are stale
+      block_integration_when:
+        - unresolved merge proposals remain
+        - any contract review is blocking

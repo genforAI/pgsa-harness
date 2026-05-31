@@ -1,0 +1,31 @@
+{
+  "blueprint_id": "project.verification.v1",
+  "contract_refs": [
+    "contracts/api.project.v1.json"
+  ],
+  "gate_policy": {
+    "block_when": [
+      "required check fails",
+      "runtime evidence contradicts contract",
+      "open merge proposal remains"
+    ],
+    "merge_ready_when": [
+      "all required_checks pass",
+      "no blocking integration issues",
+      "review_router route satisfied"
+    ]
+  },
+  "required_checks": [
+    {
+      "check_id": "unit_tests",
+      "command": "npm test",
+      "contract_refs": [
+        "api.project.v1"
+      ],
+      "evidence": "integration/integration_report.json",
+      "owner_session": "docs_security_integration",
+      "type": "unit_test"
+    }
+  ],
+  "status": "draft"
+}

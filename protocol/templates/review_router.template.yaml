@@ -1,0 +1,34 @@
+{
+  "risk_tiers": {
+    "critical": "block merge until explicit decision",
+    "high": "human owner plus security/integration review",
+    "low": "agent/session review is enough",
+    "medium": "owning session plus integration review"
+  },
+  "router_id": "project.review_router.v1",
+  "routing_rules": [
+    {
+      "blocking": true,
+      "route": [
+        "owner_session",
+        "consumer_sessions",
+        "docs_security_integration"
+      ],
+      "rule_id": "contract_breaking_change",
+      "when": [
+        "contract.breaking_change == true"
+      ]
+    },
+    {
+      "blocking": true,
+      "route": [
+        "docs_security_integration",
+        "human_owner"
+      ],
+      "rule_id": "runtime_denial_or_elevation",
+      "when": [
+        "runtime.capability_request.risk in high critical"
+      ]
+    }
+  ]
+}

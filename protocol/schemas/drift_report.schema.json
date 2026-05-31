@@ -1,0 +1,14 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "PGSA Drift Report",
+  "type": "object",
+  "required": ["project_drift_score", "maintainability_score", "issue_counts"],
+  "properties": {
+    "project_drift_score": {"type": "number"},
+    "maintainability_score": {"type": "object"},
+    "issue_counts": {"type": "object"},
+    "issues": {"type": "array"},
+    "recommended_next_action": {"type": "string"}
+  },
+  "additionalProperties": true
+}

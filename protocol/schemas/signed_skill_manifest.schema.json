@@ -1,0 +1,15 @@
+{
+  "$id": "https://pgsa.dev/schemas/signed_skill_manifest.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": true,
+  "properties": {
+    "manifest_id": {},
+    "skills": {}
+  },
+  "required": [
+    "manifest_id",
+    "skills"
+  ],
+  "title": "PGSA Signed Skill Manifest",
+  "type": "object"
+}

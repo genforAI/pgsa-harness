@@ -1,0 +1,16 @@
+role_id: backend-api
+description: Owns backend API behavior, schema shape, and auth-sensitive server decisions.
+scope:
+  - backend API
+  - response schema
+  - auth and permission checks
+external_bindings:
+  agent_protocol: protocol/SKILL.md
+must_update:
+  - pgsa/contracts/
+  - pgsa/state/backend_api.summary.md
+  - pgsa/ledger/coherence_ledger.jsonl
+escalates_when:
+  - API shape changes affect consumers
+  - auth or permission behavior changes
+  - integration readiness becomes uncertain

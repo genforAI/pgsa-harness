@@ -1,0 +1,21 @@
+{
+  "$id": "https://pgsa.dev/schemas/cognitive_audit_note.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": true,
+  "properties": {
+    "audit_id": {},
+    "evidence_strength": {},
+    "hypotheses": {},
+    "session": {},
+    "status": {}
+  },
+  "required": [
+    "audit_id",
+    "session",
+    "status",
+    "evidence_strength",
+    "hypotheses"
+  ],
+  "title": "PGSA Cognitive Audit Note",
+  "type": "object"
+}

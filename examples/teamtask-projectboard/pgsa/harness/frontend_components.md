@@ -1,23 +1,41 @@
 # PGSA Session Harness: frontend_components
 
-## Session scope
+## Session Scope
 - frontend UI
 - API consumption
 - shared components
 
-## Required protocol
+## Coordination Contract
 
-1. Read `pgsa/project.yaml` and `pgsa/sessions.yaml`.
-2. Stay inside this session scope unless a contract or integration issue requires coordination.
-3. Before changing shared behavior, inspect relevant contracts in `pgsa/contracts/`.
-4. After local work, update this session summary in `pgsa/state/frontend_components.summary.md`.
-5. If API, schema, component, permission, or docs assumptions changed, update the affected contract or review artifact.
-6. If another session may now be inconsistent, create or update a merge proposal in `pgsa/merge_proposals/`.
-7. Append a ledger event in `pgsa/ledger/coherence_ledger.jsonl`.
-8. Run `pgsa validate` and `pgsa drift-report` before handoff.
+This session is autonomous inside its scope. It coordinates with other sessions
+only through repo-local PGSA artifacts.
 
-## Conflict rule
+## Required Protocol
 
-Do not resolve semantic project conflict with a vague note. Use a contract update,
-review gate, integration blocker, or merge proposal so the next session can see
-the exact project-state issue.
+1. Read `pgsa/project.yaml`.
+2. Read `pgsa/sessions.yaml` and confirm this session's `role`, `produces`,
+   `consumes`, `must_read`, `must_update`, and `handoff_to` fields.
+3. Read relevant contracts in `pgsa/contracts/`.
+4. Read open merge proposals in `pgsa/merge_proposals/`.
+5. Read relevant session summaries in `pgsa/state/`.
+6. Do the local task inside this session scope.
+7. Update this session summary in `pgsa/state/frontend_components.summary.md`.
+8. If shared behavior changed, update the affected contract and its
+   `review_state`.
+9. If a consumer may now be stale, create or update a merge proposal.
+10. If integration should be blocked, update `pgsa/integration/integration_report.json`.
+11. Append a ledger event in `pgsa/ledger/coherence_ledger.jsonl`.
+12. Run validation and drift reporting before handoff when available.
+
+## Conflict Rule
+
+Do not resolve semantic project conflict with a vague note. Use one of:
+
+- contract update;
+- review gate decision;
+- integration blocker;
+- merge proposal;
+- ledger decision event.
+
+The next session must be able to see the exact project-state issue without chat
+history.

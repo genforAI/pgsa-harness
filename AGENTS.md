@@ -1,59 +1,46 @@
-# AGENTS.md
+# Agent Instructions
 
-This repository contains PGSA Harness Core, a repo-local project-coherence layer
-for coding-agent workflows.
+This repository is PGSA Harness Core: an agent-first, repo-local
+project-coherence protocol.
 
-PGSA Harness does not live inside Codex, Claude Code, Grok Build, or any model.
-It lives inside the repository. Agents read it, write to it, and use it as a
-workflow layer for contracts, session summaries, semantic merge proposals,
-review state, integration reports, ledger events, and drift reports.
+The protocol is the files under `protocol/` and the generated `pgsa/` artifact
+layer in target projects. Python under `tools/python/` is optional user tooling,
+not the agent-facing product surface.
 
-## Agent Operating Rules
+## Working Rules
 
-1. Read `README.md` before changing this repository.
-2. Treat generated `pgsa/` artifacts as project state.
+1. Start with `README.md`, then `protocol/SKILL.md`.
+2. Treat `pgsa/` artifacts as project state, not generated clutter.
 3. Treat `pgsa/harness/<session>.md` as the per-session operating surface.
-4. Do not present `export-context` as the communication mechanism. It is only a
+4. Read session registration fields before work: `role`, `produces`,
+   `consumes`, `must_read`, `must_update`, and `handoff_to`.
+5. When shared behavior changes, update the affected contract, summary, review,
+   integration report, merge proposal, or ledger event.
+6. Do not present `export-context` as the communication mechanism. It is only a
    convenience packet assembled from repo-local artifacts.
-5. Treat roles as project-defined. Do not assume frontend/backend/docs/security
-   are universal PGSA roles.
-6. Do not present the CLI as semantic authority. It is helper automation.
-7. Do not claim PGSA automatically solves every conflict. It makes project
-   conflicts explicit, reviewable, and resumable.
-8. Do not change claim boundaries unless explicitly asked by a maintainer.
-9. Do not claim product benchmark evidence.
-10. Do not claim PGSA is inside Codex, Claude Code, Grok Build, or any model.
-11. When changing source code or protocol behavior, run validation and drift
-   checks where relevant.
-12. For external agent runs without captured commands, stdout/stderr, diffs,
-   versions, timing, and evaluator metadata, label the run as `protocol run`.
+7. Do not present the optional Python CLI as semantic authority.
+8. Do not claim PGSA automatically solves conflicts. It makes project conflicts
+   explicit, reviewable, and resumable.
+9. Do not claim product benchmark evidence or that PGSA lives inside Codex,
+   Claude Code, Grok Build, or any model.
 
-## Useful Entry Points
+## Entry Points
 
-- `commands/` contains command-style workflow prompts.
-- `skills/` contains tool-specific skill bundles.
-- `.agents/skills/pgsa/` contains a runtime-neutral skill.
-- `hooks/` contains lifecycle hook examples that are not auto-enabled.
-- `templates/` contains public-facing PGSA artifact templates.
-- `rules/` contains short agent-readable boundaries.
-- `roles/` contains project-defined role examples and schemas.
-- `pgsa_cli/` and `core/` contain the optional Python automation.
-
-## Architecture References
-
-- `docs/custom-session-roles.md`
-- `docs/pgsa-vs-pr-gittree.md`
-- `docs/conflict-lifecycle.md`
-- `docs/cli-boundary.md`
-- `docs/subagents.md`
+- `protocol/SKILL.md`: primary agent workflow.
+- `protocol/artifact-map.md`: artifact meanings.
+- `protocol/templates/`: starter PGSA artifacts.
+- `protocol/schemas/`: structured artifact schemas.
+- `protocol/rules/`: short boundaries.
+- `examples/teamtask-projectboard/`: complete example `pgsa/` layer.
+- `tools/python/`: optional CLI for users.
 
 ## Validation
 
 From the repository root:
 
 ```bash
-python3 -m pgsa_cli.main --help
-python3 -m pgsa_cli.main --root /tmp/pgsa-smoke init --force
-python3 -m pgsa_cli.main --root /tmp/pgsa-smoke validate
-python3 -m pgsa_cli.main --root /tmp/pgsa-smoke drift-report
+PYTHONPATH=tools/python python3 -m pgsa_cli.main --root examples/teamtask-projectboard validate
+PYTHONPATH=tools/python python3 -m pgsa_cli.main --root examples/teamtask-projectboard drift-report
+python3 -m unittest discover -s tools/python/tests -t tools/python
+python3 tools/scripts/validate_release.py --root .
 ```

@@ -12,9 +12,10 @@
 
 ## Validation
 
-- [ ] `python3 -m unittest discover -s tests -t .`
-- [ ] `python3 -m pgsa_cli.main --root examples/teamtask-projectboard validate`
-- [ ] `python3 -m pgsa_cli.main --root examples/teamtask-projectboard drift-report`
+- [ ] `python3 -m unittest discover -s tools/python/tests -t tools/python`
+- [ ] `PYTHONPATH=tools/python python3 -m pgsa_cli.main --root examples/teamtask-projectboard validate`
+- [ ] `PYTHONPATH=tools/python python3 -m pgsa_cli.main --root examples/teamtask-projectboard drift-report`
+- [ ] `python3 tools/scripts/validate_release.py --root .`
 
 ## Claim boundary
 

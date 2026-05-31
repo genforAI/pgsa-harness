@@ -1,0 +1,34 @@
+{
+  "factory_plan_id": "project.factory.v1",
+  "intake": "issue_or_requirement",
+  "status": "draft",
+  "tasks": [
+    {
+      "depends_on": [],
+      "outputs": [
+        "contracts/api.project.v1.json",
+        "state/backend.summary.md"
+      ],
+      "required_evidence": [
+        "unit_tests",
+        "ledger_event"
+      ],
+      "session": "backend",
+      "task_id": "backend_contract_update"
+    },
+    {
+      "depends_on": [
+        "backend_contract_update"
+      ],
+      "outputs": [
+        "state/frontend_components.summary.md",
+        "reviews/frontend_components_review.md"
+      ],
+      "required_evidence": [
+        "consumer_review"
+      ],
+      "session": "frontend_components",
+      "task_id": "frontend_consumer_update"
+    }
+  ]
+}

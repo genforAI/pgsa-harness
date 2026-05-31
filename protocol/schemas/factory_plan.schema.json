@@ -1,0 +1,17 @@
+{
+  "$id": "https://pgsa.dev/schemas/factory_plan.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": true,
+  "properties": {
+    "factory_plan_id": {},
+    "status": {},
+    "tasks": {}
+  },
+  "required": [
+    "factory_plan_id",
+    "status",
+    "tasks"
+  ],
+  "title": "PGSA Factory Plan",
+  "type": "object"
+}

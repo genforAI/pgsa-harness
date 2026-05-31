@@ -1,8 +1,0 @@
-{
-  "default_session": "backend",
-  "artifact_root": "pgsa",
-  "roles_are_project_defined": true,
-  "run_type_default": "protocol run",
-  "level3_required_for_product_claims": true,
-  "cli_boundary": "helper automation, not semantic authority"
-}

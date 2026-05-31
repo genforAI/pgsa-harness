@@ -11,6 +11,12 @@
 ## Changed files
 - none
 
+## Produced artifacts
+- none
+
+## Consumed artifacts
+- none
+
 ## Decisions
 - none
 
@@ -23,5 +29,8 @@
 ## Review requests
 - none
 
+## Handoff targets
+- none
+
 ## Integration readiness
-pending
+ready

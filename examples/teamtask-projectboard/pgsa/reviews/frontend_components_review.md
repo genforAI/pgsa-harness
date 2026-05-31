@@ -1,10 +1,17 @@
 # Frontend Components Review
 
-## Status
-pending
+status: accepted
+blocking_issues:
+  - none
 
-## Blocking issues
+## Review Scope
+
+Initial scaffold.
+
+## Findings
+
 - none
 
-## Notes
-- Initial scaffold.
+## Decision
+
+accepted

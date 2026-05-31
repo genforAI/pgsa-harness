@@ -1,0 +1,21 @@
+[project]
+name = "pgsa-harness-tools"
+version = "1.0.0"
+description = "Optional Python tools for the PGSA repo-local project-coherence protocol"
+requires-python = ">=3.10"
+license = "Apache-2.0"
+authors = [{name = "PGSA Harness"}]
+classifiers = [
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3 :: Only",
+]
+
+[project.scripts]
+pgsa = "pgsa_cli.main:main"
+
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+include = ["pgsa_cli*", "pgsa_core*"]

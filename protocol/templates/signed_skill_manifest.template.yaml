@@ -1,0 +1,18 @@
+{
+  "manifest_id": "project.skills.v1",
+  "skills": [
+    {
+      "applies_to": [
+        "backend"
+      ],
+      "depends_on": [
+        "contracts/api.project.v1.json"
+      ],
+      "risk": "medium",
+      "signed_by": "project_owner",
+      "skill_id": "backend.contract-maintainer.v1",
+      "status": "active",
+      "version": "1.0.0"
+    }
+  ]
+}

@@ -1,0 +1,11 @@
+{
+  "event_id": "evt_000001",
+  "timestamp": "iso8601",
+  "session": "backend",
+  "event_type": "SESSION_UPDATED",
+  "status": "updated",
+  "artifact_refs": [],
+  "contract_refs": [],
+  "merge_proposal_refs": [],
+  "decision_refs": []
+}

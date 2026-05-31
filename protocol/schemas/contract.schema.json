@@ -1,0 +1,39 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "PGSA Contract",
+  "type": "object",
+  "required": [
+    "contract_id",
+    "version",
+    "boundary_type",
+    "owner_session",
+    "producer_session",
+    "consumer_sessions",
+    "status",
+    "requires_review",
+    "review_state"
+  ],
+  "properties": {
+    "contract_id": {"type": "string"},
+    "version": {"type": "string"},
+    "boundary_type": {"type": "string"},
+    "owner_session": {"type": "string"},
+    "producer_session": {"type": "string"},
+    "consumer_sessions": {"type": "array", "items": {"type": "string"}},
+    "status": {"type": "string"},
+    "endpoint": {"type": "string"},
+    "response_shape": {"type": "object"},
+    "breaking_change": {"type": "boolean"},
+    "changed_fields": {"type": "array", "items": {"type": "string"}},
+    "acceptance_tests": {"type": "array", "items": {"type": "string"}},
+    "requires_review": {"type": "array", "items": {"type": "string"}},
+    "review_state": {
+      "type": "object",
+      "additionalProperties": {"type": "string"}
+    },
+    "open_merge_proposals": {"type": "array", "items": {"type": "string"}},
+    "last_updated_by": {"type": "string"},
+    "last_updated_at": {"type": "string"}
+  },
+  "additionalProperties": true
+}

@@ -1,0 +1,11 @@
+sessions:
+  example_session:
+    role_ref: protocol/roles/examples/example-role.role.yaml
+    owner: user_or_agent_defined
+    scope:
+      - project-specific session scope
+    external_bindings:
+      agent_protocol: protocol/SKILL.md
+    must_update:
+      - pgsa/state/example_session.summary.md
+      - pgsa/ledger/coherence_ledger.jsonl

@@ -1,0 +1,30 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "PGSA Integration Report",
+  "type": "object",
+  "required": [
+    "status",
+    "blocking_issues",
+    "open_merge_proposals",
+    "session_readiness",
+    "contract_review_state"
+  ],
+  "properties": {
+    "status": {"type": "string"},
+    "blocking_issues": {"type": "array", "items": {"type": "string"}},
+    "open_merge_proposals": {"type": "array", "items": {"type": "string"}},
+    "session_readiness": {
+      "type": "object",
+      "additionalProperties": {"type": "string"}
+    },
+    "contract_review_state": {
+      "type": "object",
+      "additionalProperties": {"type": "string"}
+    },
+    "tests_passed": {"type": ["boolean", "null"]},
+    "contract_violations": {"type": "integer"},
+    "integration_failures": {"type": "integer"},
+    "notes": {"type": "string"}
+  },
+  "additionalProperties": true
+}

@@ -1,0 +1,12 @@
+role_id: example-role
+description: Describe what this role owns in this project.
+scope:
+  - project-specific responsibility
+external_bindings:
+  agent_protocol: protocol/SKILL.md
+must_update:
+  - pgsa/state/example.summary.md
+  - pgsa/ledger/coherence_ledger.jsonl
+escalates_when:
+  - shared project assumptions change
+  - another session may become stale

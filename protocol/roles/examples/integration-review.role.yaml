@@ -1,0 +1,17 @@
+role_id: integration-review
+description: Owns final project coherence review and integration readiness.
+scope:
+  - cross-session review
+  - integration readiness
+  - release blockers
+external_bindings:
+  agent_protocol: protocol/SKILL.md
+must_update:
+  - pgsa/integration/integration_report.json
+  - pgsa/reviews/
+  - pgsa/reports/drift_report.json
+  - pgsa/ledger/coherence_ledger.jsonl
+escalates_when:
+  - unresolved merge proposals remain
+  - contracts and consumers disagree
+  - project is not ready for handoff

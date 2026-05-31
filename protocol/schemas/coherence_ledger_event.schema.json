@@ -1,0 +1,18 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "PGSA Coherence Ledger Event",
+  "type": "object",
+  "required": ["event_id", "timestamp", "session", "event_type", "status"],
+  "properties": {
+    "event_id": {"type": "string"},
+    "timestamp": {"type": "string"},
+    "session": {"type": "string"},
+    "event_type": {"type": "string"},
+    "status": {"type": "string"},
+    "artifact_refs": {"type": "array", "items": {"type": "string"}},
+    "contract_refs": {"type": "array", "items": {"type": "string"}},
+    "merge_proposal_refs": {"type": "array", "items": {"type": "string"}},
+    "decision_refs": {"type": "array", "items": {"type": "string"}}
+  },
+  "additionalProperties": true
+}
