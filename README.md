@@ -73,6 +73,26 @@ pgsa/
   audits/
 ```
 
+## What v1.1 Adds
+
+Version 1.1 keeps the core protocol small, but adds optional project-state
+layers for teams that want more than session summaries and contracts:
+
+| Area | Files | What it adds |
+| --- | --- | --- |
+| Session registry | `pgsa/sessions.yaml` | Clear session identity, ownership, `must_read`, `must_update`, handoff, and escalation rules. |
+| Semantic conflicts | `pgsa/merge_proposals/` | Reviewable records for assumption drift that may not appear as a git conflict. |
+| Verification planning | `pgsa/gates/`, `pgsa/scenarios/` | Verification blueprints and scenario tests that describe what evidence should exist before integration. |
+| Review routing | `pgsa/reviews/` | Risk-aware review-routing artifacts for deciding who or what should inspect a change. |
+| Runtime evidence | `pgsa/runtime/`, `pgsa/evidence/` | Records from external runtime/security tools without claiming PGSA enforces runtime policy itself. |
+| Capability contracts | `pgsa/runtime/` | Explicit capability and approval expectations for sessions or tools. |
+| Signed skills | `pgsa/skills/` | Optional skill provenance records, digests, and trust metadata. |
+| Factory-style planning | `pgsa/factory/` | Task DAGs and decomposition plans; not an autonomous factory or hosted orchestrator. |
+| Cognitive audit notes | `pgsa/audits/` | Hypothesis-only research notes; not model interpretability evidence by itself. |
+
+All advanced packs are optional. They are repo-local artifact shapes, not
+services, daemons, CI, sandboxing, merge automation, or security enforcement.
+
 The important loop is:
 
 1. Read `pgsa/project.yaml`.
@@ -348,8 +368,8 @@ surface but adds clearer project-state structure and optional advanced packs:
 - explicit semantic conflict records through merge proposals;
 - stricter optional advanced artifact schemas and strict advanced validation;
 - verification blueprints, scenario tests, review routing, runtime evidence,
-  signed skill provenance, factory-style planning, and cognitive-audit notes as
-  optional files;
+  capability contracts, signed skill provenance, factory-style planning,
+  runtime/security adapter specs, and cognitive-audit notes as optional files;
 - clearer claim boundaries: PGSA is not CI, a sandbox, PR automation, security
   enforcement, model interpretability, or a hosted-agent benchmark;
 - embedded use with Codex and Claude Code through normal repo instruction files.
