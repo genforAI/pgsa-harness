@@ -13,15 +13,22 @@ not the agent-facing product surface.
 2. Treat `pgsa/` artifacts as project state, not generated clutter.
 3. Treat `pgsa/harness/<session>.md` as the per-session operating surface.
 4. Read session registration fields before work: `role`, `produces`,
-   `consumes`, `must_read`, `must_update`, and `handoff_to`.
+   `owner_scope`, `consumes`, `must_read`, `must_update`, `handoff_to`, and
+   `escalation_policy`.
 5. When shared behavior changes, update the affected contract, summary, review,
    integration report, merge proposal, or ledger event.
 6. Do not present `export-context` as the communication mechanism. It is only a
    convenience packet assembled from repo-local artifacts.
 7. Do not present the optional Python CLI as semantic authority.
-8. Do not claim PGSA automatically solves conflicts. It makes project conflicts
+8. Do not describe PGSA as PR automation. PRs review code diffs; PGSA records
+   session identity, semantic project-state drift, and handoff obligations before
+   and around PR review.
+9. Do not claim PGSA automatically solves conflicts. It makes project conflicts
    explicit, reviewable, and resumable.
-9. Do not claim product benchmark evidence or that PGSA lives inside Codex,
+10. When writing public positioning, emphasize session registration,
+   `must_read`/`must_update`, semantic continuity, contracts, integration state,
+   ledger records, and optional v1.1 advanced packs.
+11. Do not claim product benchmark evidence or that PGSA lives inside Codex,
    Claude Code, Grok Build, or any model.
 
 ## Entry Points
