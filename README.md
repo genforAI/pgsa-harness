@@ -26,6 +26,15 @@ agent reads repo-local PGSA artifacts
 
 The communication medium is the repository, not chat history.
 
+```mermaid
+flowchart LR
+  A["coding-agent session"] --> B["pgsa/sessions.yaml<br/>session identity"]
+  B --> C["must_read<br/>project-state inputs"]
+  C --> D["task work"]
+  D --> E["must_update<br/>summaries, contracts, reviews, integration, ledger"]
+  E --> F["next session resumes<br/>from repo-local state"]
+```
+
 ## Core Files
 
 The protocol source lives under `protocol/`:
@@ -76,6 +85,50 @@ The important loop is:
 7. Update the affected PGSA artifacts before handoff.
 8. If shared assumptions changed, update a contract or create a merge proposal.
 
+## Multi-Session Registration
+
+PGSA is registration-based. Each project session is declared in
+`pgsa/sessions.yaml` with a role, ownership scope, produced artifacts, consumed
+artifacts, required reads, required updates, handoff targets, and escalation
+policy.
+
+```mermaid
+flowchart TD
+  S["pgsa/sessions.yaml"]
+  S --> R["role"]
+  S --> O["owner_scope"]
+  S --> P["produces"]
+  S --> C["consumes"]
+  S --> MR["must_read"]
+  S --> MU["must_update"]
+  S --> H["handoff_to"]
+  S --> E["escalation_policy"]
+```
+
+The session registration tells a Codex, Claude Code, or other coding-agent
+session what it owns, what it must inspect, and what it must update before
+handoff.
+
+## Why This Is Not PR Automation
+
+PGSA is not trying to replace pull requests. PRs are still the right place to
+review a code diff, run CI, discuss implementation, and merge changes.
+
+PGSA works earlier and around that process. It records the project-state that
+coding-agent sessions need before a PR is even ready:
+
+- which session owns which part of the project;
+- which contracts and summaries must be read before editing;
+- which artifacts must be updated before handoff;
+- which semantic assumptions changed even when git has no text conflict;
+- why integration is ready or blocked.
+
+The main advantage over plain PR review is semantic continuity. A backend
+session can change an API in a way that still compiles, while a frontend session
+keeps the old assumption. Git may not conflict and a PR may not expose the drift
+until late review. PGSA records that drift as repo-local project state so the
+next agent does not depend on private chat history.
+
 ## Repository Layout
 
 ```text
@@ -114,6 +167,112 @@ PYTHONPATH=pgsa-harness/tools/python python3 -m pgsa_cli.main --root . export-co
 
 Agents then coordinate by reading and updating `pgsa/` artifacts. The embedded
 `pgsa-harness/` folder remains the protocol and optional helper package.
+
+## Codex And Claude Code Use
+
+For Codex, put PGSA guidance in the target repository's `AGENTS.md`. For Claude
+Code, put the equivalent guidance in `CLAUDE.md`; this repository includes both
+files as examples.
+
+Minimal Codex prompt:
+
+```text
+Use PGSA session backend. Read pgsa-harness/protocol/SKILL.md, inspect
+pgsa/sessions.yaml, then read the backend session's must_read artifacts before
+editing. Update the registered must_update artifacts before handoff.
+```
+
+Minimal Claude Code prompt:
+
+```text
+Use PGSA session frontend_components. Read CLAUDE.md, pgsa-harness/protocol/SKILL.md,
+pgsa/sessions.yaml, and the frontend_components must_read artifacts before
+editing. If UI assumptions no longer match a contract, create or update a merge
+proposal instead of relying on conversation memory.
+```
+
+Multiple sessions can run from separate terminals, separate worktrees, or
+separate agent threads. Give each one a distinct PGSA identity:
+
+```text
+backend                  owns API contracts and backend summary
+frontend_components      consumes API contracts and owns UI review state
+docs_security_integration reads contracts, reviews, summaries, merge proposals,
+                          integration state, and ledger before deciding readiness
+```
+
+### Starting Linked Sessions
+
+PGSA does not require a background daemon. The automation starts when each agent
+session is launched with a PGSA identity and the same repo-local protocol.
+
+1. Initialize PGSA in the target repository.
+
+   ```bash
+   PYTHONPATH=pgsa-harness/tools/python python3 -m pgsa_cli.main --root . init --force
+   PYTHONPATH=pgsa-harness/tools/python python3 -m pgsa_cli.main --root . validate
+   ```
+
+2. Register or edit sessions in `pgsa/sessions.yaml`.
+
+   ```text
+   backend
+   frontend_components
+   docs_security_integration
+   ```
+
+3. Start one agent session per PGSA identity.
+
+   Codex example:
+
+   ```bash
+   codex "Use PGSA session backend. Read AGENTS.md, pgsa-harness/protocol/SKILL.md, pgsa/sessions.yaml, and the backend must_read artifacts. Work only inside the backend owner_scope unless a merge proposal is needed. Update backend must_update artifacts before handoff."
+
+   codex "Use PGSA session frontend_components. Read AGENTS.md, pgsa-harness/protocol/SKILL.md, pgsa/sessions.yaml, frontend_components must_read artifacts, and backend contract state. Update frontend must_update artifacts before handoff."
+
+   codex "Use PGSA session docs_security_integration. Read AGENTS.md, pgsa-harness/protocol/SKILL.md, all summaries, reviews, contracts, merge proposals, integration state, and ledger. Decide readiness and block integration if unresolved semantic drift remains."
+   ```
+
+   Claude Code example:
+
+   ```bash
+   claude "Use PGSA session backend. Read CLAUDE.md, pgsa-harness/protocol/SKILL.md, pgsa/sessions.yaml, and backend must_read artifacts before editing. Update backend must_update artifacts before handoff."
+
+   claude "Use PGSA session frontend_components. Read CLAUDE.md, pgsa-harness/protocol/SKILL.md, pgsa/sessions.yaml, frontend_components must_read artifacts, and current contracts before editing. Create or update a merge proposal if UI assumptions drift."
+
+   claude "Use PGSA session docs_security_integration. Read CLAUDE.md, pgsa-harness/protocol/SKILL.md, all summaries, reviews, merge proposals, contracts, integration state, and ledger before deciding readiness."
+   ```
+
+4. Let sessions coordinate through files, not chat history.
+
+   ```text
+   backend updates contract + backend summary
+   frontend reads contract + updates frontend review
+   integration reads summaries/reviews/merge_proposals + updates readiness
+   ledger records accepted decisions
+   ```
+
+5. Validate before handoff or integration.
+
+   ```bash
+   PYTHONPATH=pgsa-harness/tools/python python3 -m pgsa_cli.main --root . validate
+   PYTHONPATH=pgsa-harness/tools/python python3 -m pgsa_cli.main --root . drift-report
+   ```
+
+For Codex subagent workflows, keep the parent session as the integrator and ask
+subagents to return PGSA-ready summaries instead of writing every artifact
+directly:
+
+```text
+Use PGSA as the coordination layer. Spawn three subagents:
+- backend-contract: inspect backend/API contract drift.
+- frontend-consumer: inspect UI assumptions against contracts.
+- integration-review: inspect open merge proposals and readiness.
+
+Each subagent reads pgsa-harness/protocol/SKILL.md and relevant pgsa/ artifacts,
+then returns: files read, risks found, and PGSA artifacts that should be updated.
+The parent session writes final PGSA updates.
+```
 
 ## Optional Python Tools
 
@@ -163,6 +322,53 @@ PGSA coordinates agents through repo-local artifacts:
 - merge proposals record semantic conflicts;
 - review and integration artifacts accept or block project state;
 - the ledger records decisions.
+
+Conflict handling is explicit and reviewable:
+
+```mermaid
+flowchart LR
+  D["semantic drift"] --> M["merge proposal"]
+  M --> O["resolution options"]
+  O --> R["producer / consumer / integration review"]
+  R --> U["update code, contracts, reviews, integration"]
+  U --> L["append ledger event"]
+```
+
+PGSA does not automatically solve conflicts. It makes them visible as project
+artifacts so another session can review the evidence, select a resolution, and
+resume work without depending on private chat history.
+
+## What Changed In v1.1
+
+Compared with the initial core-only release, v1.1 keeps the protocol-first
+surface but adds clearer project-state structure and optional advanced packs:
+
+- stronger session registration language around `must_read`, `must_update`,
+  ownership, handoff, and escalation;
+- explicit semantic conflict records through merge proposals;
+- stricter optional advanced artifact schemas and strict advanced validation;
+- verification blueprints, scenario tests, review routing, runtime evidence,
+  signed skill provenance, factory-style planning, and cognitive-audit notes as
+  optional files;
+- clearer claim boundaries: PGSA is not CI, a sandbox, PR automation, security
+  enforcement, model interpretability, or a hosted-agent benchmark;
+- embedded use with Codex and Claude Code through normal repo instruction files.
+
+## Operating Points
+
+- Use PGSA when work is long-running, split across sessions, or likely to change
+  shared assumptions.
+- Keep PRs, tests, CI, and code review as the outer delivery and verification
+  loop.
+- Use PGSA as the inner project-state layer that tells each agent session what
+  to read, what it owns, what it must update, and where semantic drift is
+  recorded.
+- Start each Codex or Claude Code session with a prompt such as
+  `Use PGSA session backend` or `Use PGSA session docs_security_integration`.
+- Let sessions coordinate through `pgsa/` files instead of private chat history.
+- For small one-off changes, PGSA may be unnecessary. It is designed for
+  multi-session maintenance, contract drift, integration handoff, and repeated
+  agent work over time.
 
 ## Boundaries
 
