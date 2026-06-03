@@ -40,6 +40,7 @@ ALLOWED_ROOT_ENTRIES = {
     ".github",
     ".gitignore",
     "AGENTS.md",
+    "CLAUDE.md",
     "CONTRIBUTING.md",
     "LICENSE",
     "README.md",
