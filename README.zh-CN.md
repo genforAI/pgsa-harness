@@ -90,7 +90,7 @@ pgsa/
 8. 如果共享假设改变，更新 contract 或创建 merge proposal。
 9. 如果决策已被接受，追加 ledger event，或先提交 pending event 等待 review。
 
-## Multi-Session Registration
+## 多 Session 注册
 
 PGSA 是 registration-based 的。每个项目 session 都在 `pgsa/sessions.yaml` 中声明 role、ownership scope、produced artifacts、consumed artifacts、required reads、required updates、handoff targets 和 escalation policy。
 
@@ -131,7 +131,7 @@ session 发现语义漂移
 
 | 层 | 文件 | 含义 |
 | --- | --- | --- |
-| 当前可策展状态 | `sessions.yaml`, `contracts/`, `state/`, `merge_proposals/`, `reviews/`, `integration/` | 可编辑的当前项目状态：roles、assumptions、open conflicts、review state、integration readiness。 |
+| 当前可编辑状态 | `sessions.yaml`, `contracts/`, `state/`, `merge_proposals/`, `reviews/`, `integration/` | 可编辑的当前项目状态：roles、assumptions、open conflicts、review state、integration readiness。 |
 | 待接受历史 | `ledger/pending/*.json` | 并行 session 写入的 draft event records，尚未被接受。 |
 | 已接受历史 | `ledger/coherence_ledger.jsonl` | append-only 的已接受 project-coherence events 和 decisions 时间线。 |
 
