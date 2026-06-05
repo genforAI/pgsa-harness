@@ -303,6 +303,33 @@ def validate(root: Path) -> list[ValidationIssue]:
                 issues.append(_issue("stale_state_items", "warning", f"pending ledger event missing {field}", pending))
         if event.get("session") not in sessions and event.get("session") != "system":
             issues.append(_issue("stale_state_items", "warning", f"pending ledger event references unknown session {event.get('session')}", pending))
+    imports_index = pgsa / "imports" / "index.json"
+    if imports_index.exists():
+        try:
+            imports_doc = read_structured(imports_index)
+        except Exception as exc:
+            issues.append(_issue("artifact_completeness", "error", f"invalid import index: {exc}", imports_index))
+            imports_doc = {}
+        imports = imports_doc.get("imports", {}) if isinstance(imports_doc, dict) else {}
+        if not isinstance(imports, dict):
+            issues.append(_issue("artifact_completeness", "error", "import index imports should be an object", imports_index))
+            imports = {}
+        for source_id, item in imports.items():
+            if not isinstance(item, dict):
+                issues.append(_issue("artifact_completeness", "warning", f"import {source_id} should be an object", imports_index))
+                continue
+            for field in ["kind", "status", "file_count", "total_bytes"]:
+                if field not in item:
+                    issues.append(_issue("artifact_completeness", "warning", f"import {source_id} missing {field}", imports_index))
+            recommended_session = item.get("recommended_session")
+            if recommended_session and recommended_session not in sessions:
+                issues.append(_issue("artifact_completeness", "warning", f"import {source_id} references unknown session {recommended_session}", imports_index))
+            local_path = item.get("local_path")
+            if local_path:
+                if not _valid_rel_path(local_path):
+                    issues.append(_issue("artifact_completeness", "warning", f"import {source_id} local_path should be relative", imports_index))
+                elif not (pgsa / local_path).exists():
+                    issues.append(_issue("artifact_completeness", "warning", f"import {source_id} local_path missing: {local_path}", pgsa / str(local_path)))
     for proposal in (pgsa / "merge_proposals").glob("*.md"):
         text = proposal.read_text(encoding="utf-8").lower()
         status = _markdown_field(text, "status")
