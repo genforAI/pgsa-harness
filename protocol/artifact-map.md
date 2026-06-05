@@ -4,7 +4,8 @@
 - `sessions.yaml`: durable session ownership, produced/consumed artifacts, required reads/updates, and handoff targets.
 - `harness/<session>.md`: per-session operating instructions.
 - `contracts/*.json`: shared producer/consumer assumptions, review state, acceptance tests, and breaking-change state.
-- `state/*.summary.md`: compressed session memory.
+- `state/*.summary.md`: compressed session memory plus next-session recovery
+  snapshot: scope, failed commands, touched files, open risks, and next action.
 - `merge_proposals/*.md`: semantic conflict records with decision owner, affected contracts, and resolution state.
 - `reviews/*`: review-gate status and blocking issues.
 - `integration/integration_report.json`: final integration readiness, blockers, open merge proposals, and contract review state.
