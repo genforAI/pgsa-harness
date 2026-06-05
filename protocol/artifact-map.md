@@ -12,6 +12,13 @@
 - `ledger/coherence_ledger.jsonl`: append-only project-coherence memory.
 - `ledger/pending/*.json`: optional per-session ledger event drafts for parallel
   agent work; reviewer appends accepted events into `coherence_ledger.jsonl`.
+- `imports/index.json`: external harness, skill pack, protocol, or docs import
+  registry. Imported material is indexed for review; it is not trusted or active
+  project guidance by default.
+- `imports/inbox/`: drop folder for external repositories or skill packs before
+  import processing. Processed items are cleaned by default.
+- `imports/sources/<source_id>/`: optional copied external source material so an
+  import-review session can inspect it in the same repository.
 - `reports/drift_report.json`: generated drift and maintainability report.
 
 
