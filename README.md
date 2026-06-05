@@ -200,6 +200,7 @@ For the inbox workflow, copy or clone external sources into
 ```bash
 cp -R ../external-pack pgsa/imports/inbox/external_pack
 PYTHONPATH=pgsa-harness/tools/python python3 -m pgsa_cli.main --root . import process-inbox
+PYTHONPATH=pgsa-harness/tools/python python3 -m pgsa_cli.main --root . import review external_pack
 PYTHONPATH=pgsa-harness/tools/python python3 -m pgsa_cli.main --root . import stats
 ```
 
@@ -208,16 +209,24 @@ PYTHONPATH=pgsa-harness/tools/python python3 -m pgsa_cli.main --root . import st
 and clears the processed inbox item by default. Pass `--keep` only when you are
 debugging.
 
+`import review <source_id>` is the review step. It scans the copied source for
+`SKILL.md`, README, and schema files, updates the import record to `reviewed`,
+and writes the result into `harness/<session>.md`,
+`state/<session>.summary.md`, and `ledger/pending/`. It still does not install
+or trust the imported content automatically.
+
 The import command records source kind, origin path, optional local copy,
-selected files, file count, total bytes, and the recommended triage session in
-`pgsa/imports/index.json`.
+selected files, file count, total bytes, detected skill entries, review
+artifacts, and the recommended triage session in `pgsa/imports/index.json`.
 
 The intended flow is review-first:
 
 1. Place or copy the external source into `pgsa/imports/inbox/`.
 2. Let `external_import_review` or another import-review session process it.
 3. Let that session read `imports/index.json` and `imports/sources/<source_id>/`.
-4. Promote only accepted material into contracts, summaries, roles, capability
+4. Run `pgsa import review <source_id>` or have the session write the same
+   review artifacts manually.
+5. Promote only accepted material into contracts, summaries, roles, capability
    manifests, merge proposals, or ledger events.
 
 Imported content is source material, not trusted project guidance. This keeps
@@ -363,7 +372,9 @@ directly.
 ## Codex SDK Demo
 
 The optional `sdk/` folder shows how PGSA can drive multiple registered sessions
-through the official Codex SDK without changing the core protocol:
+through the official Codex SDK without changing the core protocol. The SDK
+surface follows the official Python library documented at
+<https://developers.openai.com/codex/sdk#python-library>.
 
 ```bash
 python3 sdk/codex_pgsa_runner.py --root . --config sdk/codex-runner.config.example.json --dry-run
@@ -373,6 +384,7 @@ For a real SDK run, install the official SDK separately:
 
 ```bash
 pip install openai-codex
+python3 sdk/codex_pgsa_runner.py --start-only
 python3 sdk/codex_pgsa_runner.py --root . --config sdk/codex-runner.config.example.json
 ```
 
