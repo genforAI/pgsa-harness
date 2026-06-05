@@ -13,7 +13,8 @@ pip install openai-codex
 ```
 
 The demo runner reads `pgsa/sessions.yaml`, builds one PGSA-aware prompt per
-session, and either prints the plan (`--dry-run`) or starts Codex SDK threads.
+session, and either prints the plan (`--dry-run`) or starts Codex SDK threads in
+the target project root passed by `--root`.
 
 ```bash
 python3 sdk/codex_pgsa_runner.py --root . --config sdk/codex-runner.config.example.json --dry-run
@@ -31,6 +32,10 @@ For a real SDK run:
 pip install openai-codex
 python3 sdk/codex_pgsa_runner.py --root . --config sdk/codex-runner.config.example.json
 ```
+
+Set `"ephemeral": true` in the config for temporary verification runs that
+should not keep long-lived Codex thread history. Leave it `false` when you want
+the SDK-run sessions to remain resumable.
 
 Keep this as userland orchestration:
 
