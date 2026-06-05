@@ -61,7 +61,7 @@ contract review helper can apply to both `backend` and
 
 ## Promotion Boundary
 
-Imported source material stays in `pgsa/imports/sources/<source_id>`.
+Imported source material stays in `pgsa/imports/sources/<source_id>/`.
 Accepted project metadata can move into:
 
 - `pgsa/skills/signed_skill_manifest.yaml`
