@@ -3,6 +3,14 @@
 ## Scope
 {scope}
 
+## Recovery Snapshot
+- scope: see Scope above
+- last_known_good_state: initial scaffold
+- failed_commands: none
+- touched_files: none
+- open_risks: none
+- next_action: continue from session must_read artifacts
+
 ## Completed
 - Initial PGSA scaffold created.
 
