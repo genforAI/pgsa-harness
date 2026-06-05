@@ -69,7 +69,7 @@ pgsa/
 | `sessions.yaml` | session 身份、职责、必须读取、必须更新和 handoff 目标。 |
 | `harness/<session>.md` | 单个 session 的操作说明。 |
 | `contracts/*.json` | producer/consumer 共享假设、review state、验收测试和 breaking-change state。 |
-| `state/*.summary.md` | 压缩后的 session memory。 |
+| `state/*.summary.md` | 压缩后的 session memory，并包含 recovery snapshot：scope、失败命令、触碰文件、开放风险和下一步。 |
 | `merge_proposals/*.md` | 开放中的语义冲突记录，包含 evidence、options 和 decision owner。 |
 | `reviews/*` | review gate 状态和阻塞问题。 |
 | `integration/integration_report.json` | 当前 integration readiness、blockers、open merge proposals 和 contract review state。 |
@@ -89,6 +89,22 @@ pgsa/
 7. 在 handoff 前更新受影响的 PGSA artifacts。
 8. 如果共享假设改变，更新 contract 或创建 merge proposal。
 9. 如果决策已被接受，追加 ledger event，或先提交 pending event 等待 review。
+
+## 下一轮 Session 恢复
+
+仓库本地状态只有在下一轮不需要重放聊天记录时才真正有用。因此每个
+`pgsa/state/<session>.summary.md` 都应该保留一个短的 recovery snapshot：
+
+- 当前 scope；
+- last known good state；
+- 仍然重要的失败命令或失败检查；
+- touched files，包括已经检查过或部分修改过的文件；
+- open risks、blockers 或未解决假设；
+- 下一步建议动作。
+
+这个 snapshot 不是聊天记录，也不是完整 transcript。它的目标是让下一个
+Codex、Claude Code 或人工 reviewer 能够恢复工作、判断哪些检查必须重跑，
+并避免重复执行已经失败的命令。
 
 ## 多 Session 注册
 
