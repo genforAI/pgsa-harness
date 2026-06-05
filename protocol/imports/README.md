@@ -34,12 +34,20 @@ Importing is intentionally review-first:
 Do not treat imported content as trusted instructions by default. It is source
 material for a session to inspect and integrate.
 
+Dedicated session guide:
+
+- `protocol/imports/external_import_review_agent.md`: prompt and workflow for
+  starting the `external_import_review` agent session.
+- `protocol/roles/examples/external-import-review.role.yaml`: role definition
+  for import-review ownership and update obligations.
+
 Optional tooling:
 
 ```bash
 PYTHONPATH=tools/python python3 -m pgsa_cli.main --root . import add external_pack --path ../external-pack --kind skill_pack
 PYTHONPATH=tools/python python3 -m pgsa_cli.main --root . import process-inbox
 PYTHONPATH=tools/python python3 -m pgsa_cli.main --root . import review external_pack
+PYTHONPATH=tools/python python3 -m pgsa_cli.main --root . import promote external_pack --accept-import --applies-to backend,frontend_components
 PYTHONPATH=tools/python python3 -m pgsa_cli.main --root . import stats
 PYTHONPATH=tools/python python3 -m pgsa_cli.main --root . session register external_skill_import --role external-skill-review --scope "triage imported skills" --must-read imports/index.json,imports/sources/external_pack/ --must-update state/external_skill_import.summary.md,ledger/pending/
 ```
@@ -60,6 +68,12 @@ This creates an explicit integration trail, not an automatic plugin loader.
 Accepted import metadata can later be promoted into `pgsa/skills/`, role files,
 contracts, capability manifests, or ledger decisions. Raw unreviewed external
 content stays in `pgsa/imports/sources/<source_id>/`.
+
+`pgsa import promote <source_id>` writes accepted skill provenance into
+`pgsa/skills/signed_skill_manifest.yaml`. It does not install global skills or
+activate imported instructions automatically.
+Use `--applies-to` to declare which later PGSA sessions may use the accepted
+provenance.
 
 ## Management Boundary
 
