@@ -19,6 +19,8 @@ Primary generated files:
 - `pgsa/integration/integration_report.json`
 - `pgsa/ledger/coherence_ledger.jsonl`
 - `pgsa/ledger/pending/*.json` for parallel-session ledger event drafts
+- `pgsa/imports/index.json` for external harness/skill/protocol import records
+- `pgsa/imports/inbox/` for external sources waiting to be processed
 
 Key coordination templates:
 
@@ -26,6 +28,7 @@ Key coordination templates:
 - `contract.template.json`: producer/consumer contract state and review state.
 - `merge_proposal.template.md`: semantic conflict record.
 - `integration_report.template.json`: final readiness and blocker state.
+- `import_index.template.json`: indexed external sources that require review before promotion.
 
 Role and subagent templates:
 
