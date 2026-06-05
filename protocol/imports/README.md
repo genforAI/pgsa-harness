@@ -53,3 +53,19 @@ review artifacts and pending ledger events exist, and validates the resulting
 PGSA project.
 
 This creates an explicit integration trail, not an automatic plugin loader.
+
+## Management Boundary
+
+Keep these layers separate:
+
+- bundled PGSA optional packs live in `protocol/capabilities/`,
+  `protocol/adapters/`, `protocol/templates/`, and `protocol/schemas/`;
+- user-added external material enters the target project through
+  `pgsa/imports/inbox/` and, after processing, `pgsa/imports/sources/<source_id>/`;
+- accepted skill metadata or provenance can be promoted into `pgsa/skills/`
+  when advanced mode is used;
+- raw unreviewed external content should not be copied directly into shipped
+  `protocol/` folders.
+
+The import layer is for organizing and reviewing external material. It does not
+install skills into a user's global agent environment by itself.
