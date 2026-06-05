@@ -49,6 +49,9 @@ pgsa/
   reviews/
   integration/
   ledger/
+  imports/
+    inbox/
+    sources/
   reports/
 
   # 可选 advanced mode
@@ -75,6 +78,9 @@ pgsa/
 | `integration/integration_report.json` | 当前 integration readiness、blockers、open merge proposals 和 contract review state。 |
 | `ledger/coherence_ledger.jsonl` | append-only 的已接受项目一致性事件。 |
 | `ledger/pending/*.json` | 并行 session 的事件草稿，由 review/integration session 接受后提升到正式 ledger。 |
+| `imports/index.json` | 外部 harness / skill / protocol 的导入索引，审查后才可提升为项目状态。 |
+| `imports/inbox/` | 外部仓库或 skill pack 的投放目录，处理后默认清理。 |
+| `imports/sources/<source_id>/` | 可选的外部来源本地副本，便于在仓库内审查。 |
 
 ## 核心流程
 
@@ -122,9 +128,67 @@ frontend_components
 docs_security_integration
   reads contracts, summaries, reviews, merge proposals, integration state,
   and ledger before deciding readiness
+
+external_import_review
+  triages imported harnesses, skill packs, protocols, and docs before promotion
 ```
 
 这个注册信息告诉 Codex、Claude Code 或其他 coding-agent session：它拥有什么、必须检查什么、handoff 前必须更新什么。
+
+PGSA 默认包含一个 active 的 `external_import_review` session，用于导入审查。当用户需要自定义角色时，agent 也可以显式注册新的 session identity：
+
+```bash
+PYTHONPATH=pgsa-harness/tools/python python3 -m pgsa_cli.main --root . session register research_import \
+  --role external-skill-review \
+  --scope "triage imported skills and protocols" \
+  --must-read imports/index.json,imports/sources/external_pack/ \
+  --must-update state/research_import.summary.md,ledger/pending/ \
+  --handoff-to docs_security_integration \
+  --self-registered
+```
+
+这会创建 `sessions.yaml` 条目，以及对应的 `harness/` 和 `state/` 文件。新 session 仍然有明确 scope 和必须读写的 artifacts；它不会获得整个仓库的全局权限。
+
+## 外部 Harness 导入
+
+外部 harness、skills、prompt packs、protocol folders 或 docs 应先进入 import index，再由一个 session 审查整合。
+
+直接导入：
+
+```bash
+PYTHONPATH=pgsa-harness/tools/python python3 -m pgsa_cli.main --root . import add external_pack \
+  --path ../external-pack \
+  --kind skill_pack \
+  --session external_import_review
+```
+
+inbox 工作流：把外部来源复制或 clone 到 `pgsa/imports/inbox/`，再处理 inbox：
+
+```bash
+cp -R ../external-pack pgsa/imports/inbox/external_pack
+PYTHONPATH=pgsa-harness/tools/python python3 -m pgsa_cli.main --root . import process-inbox
+PYTHONPATH=pgsa-harness/tools/python python3 -m pgsa_cli.main --root . import review external_pack
+PYTHONPATH=pgsa-harness/tools/python python3 -m pgsa_cli.main --root . import stats
+```
+
+`process-inbox` 会索引每个 inbox item，复制到 `pgsa/imports/sources/<source_id>/`，写入 `pgsa/imports/index.json`，并默认清理已处理的 inbox item。只有调试时才建议传 `--keep`。
+
+`import review <source_id>` 是审查步骤。它会扫描复制后的来源，识别
+`SKILL.md`、README 和 schema 文件，把 import 记录更新为 `reviewed`，
+并把审查结果写入 `harness/<session>.md`、`state/<session>.summary.md`
+和 `ledger/pending/`。这仍然不会自动安装或信任外部内容。
+
+import 命令会在 `pgsa/imports/index.json` 记录来源类型、原始路径、可选本地副本、selected files、file count、total bytes、检测到的 skill 条目、review artifacts 和推荐审查 session。
+
+推荐流程是 review-first：
+
+1. 把外部来源放入或复制到 `pgsa/imports/inbox/`。
+2. 让 `external_import_review` 或其他 import-review session 处理它。
+3. 让该 session 读取 `imports/index.json` 和 `imports/sources/<source_id>/`。
+4. 运行 `pgsa import review <source_id>`，或让 session 手动写出等价的审查 artifacts。
+5. 只有被接受的内容才提升到 contracts、summaries、roles、capability manifests、merge proposals 或 ledger events。
+
+导入内容只是待审查来源材料，不是默认可信项目指导。这样可以避免外部 skill 静默改变当前 project contract 或覆盖 PGSA 状态。
 
 ## 冲突生命周期和 Ledger 边界
 
@@ -238,6 +302,25 @@ codex "Use PGSA session docs_security_integration. Read AGENTS.md, pgsa-harness/
 Claude Code 可以用同样方式启动：`claude "Use PGSA session ..."`。
 
 对于 Codex subagent workflow，建议让 parent session 作为 integrator，让 subagents 返回 PGSA-ready summaries，而不是让每个 subagent 都直接写所有 artifacts。
+
+## Codex SDK Demo
+
+可选的 `sdk/` 文件夹展示了如何通过官方 Codex SDK 启动多个已注册 PGSA session，同时不改变核心协议。SDK 入口对应官方 Python library 文档：
+<https://developers.openai.com/codex/sdk#python-library>。
+
+```bash
+python3 sdk/codex_pgsa_runner.py --root . --config sdk/codex-runner.config.example.json --dry-run
+```
+
+真实运行前需要单独安装官方 SDK：
+
+```bash
+pip install openai-codex
+python3 sdk/codex_pgsa_runner.py --start-only
+python3 sdk/codex_pgsa_runner.py --root . --config sdk/codex-runner.config.example.json
+```
+
+runner 会读取 `pgsa/sessions.yaml`，为每个 session 构造 PGSA-aware prompt，并要求对应 Codex thread 在 handoff 前更新自己的 `must_update` artifacts。它是 userland orchestration：PGSA 仍然是文件协议，Codex sandboxing/approvals 仍然由 Codex 负责。
 
 ## 可选 Python 工具
 
