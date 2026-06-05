@@ -17,7 +17,7 @@
           },
           "status": {
             "type": "string",
-            "enum": ["indexed", "triaging", "accepted", "rejected", "deprecated"]
+            "enum": ["indexed", "triaging", "reviewed", "accepted", "rejected", "deprecated"]
           },
           "origin_path": {"type": "string"},
           "local_path": {
@@ -31,7 +31,24 @@
           "file_count": {"type": "integer"},
           "total_bytes": {"type": "integer"},
           "selected_files": {"type": "array", "items": {"type": "string"}},
-          "notes": {"type": "string"}
+          "notes": {"type": "string"},
+          "reviewed_at": {"type": "string"},
+          "review_session": {"type": "string"},
+          "review_summary": {"type": "string"},
+          "review_artifacts": {"type": "array", "items": {"type": "string"}},
+          "detected_skills": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["name", "path"],
+              "properties": {
+                "name": {"type": "string"},
+                "description": {"type": "string"},
+                "path": {"type": "string", "pattern": "^[^/].*"}
+              },
+              "additionalProperties": false
+            }
+          }
         },
         "additionalProperties": true
       }
