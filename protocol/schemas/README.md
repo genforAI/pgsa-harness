@@ -15,6 +15,7 @@ Required artifact families:
 - `pgsa/reviews/*.md`
 - `pgsa/integration/integration_report.json`
 - `pgsa/ledger/coherence_ledger.jsonl`
+- `pgsa/imports/index.json`
 - `pgsa/reports/drift_report.json`
 
 Validation logic currently lives in
