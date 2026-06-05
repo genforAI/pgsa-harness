@@ -33,6 +33,19 @@ agent reads repo-local PGSA artifacts
 
 ## 核心目录
 
+PGSA 是放进你已有项目仓库里的协议层，不是替代你的主项目目录。你的真实项目代码仍然放在原来的位置，比如 `src/`、`app/`、`packages/`、`docs/`、`tests/`。PGSA 只是在旁边增加两个目录：
+
+```text
+your-project/
+  pgsa-harness/        # 复制进来的 PGSA 协议和可选工具
+  pgsa/                # 当前项目自己的 agent coordination state
+  src/                 # 你的真实产品代码，保持原样
+  tests/               # 你的现有测试
+  docs/                # 你的现有文档
+```
+
+下面的 `pgsa/` 指的是“你的项目仓库里的 `pgsa/`”，不是 `pgsa-harness` 仓库本身。
+
 ```text
 pgsa/
   project.yaml
@@ -49,7 +62,7 @@ pgsa/
     sources/
   reports/
 
-  # optional advanced mode
+  # optional advanced artifacts, 由 init --advanced 创建
   gates/
   runtime/
   skills/
@@ -74,6 +87,27 @@ pgsa/
 | `ledger/pending/*.json` | 并行 session 写入的 draft event records，等待 review/integration 接受。 |
 | `ledger/coherence_ledger.jsonl` | append-only 的已接受项目一致性事件。 |
 | `imports/index.json` | 外部 skill / harness / protocol 的导入索引。 |
+
+Advanced mode 需要显式启用：
+
+```bash
+PYTHONPATH=pgsa-harness/tools/python python3 -m pgsa_cli.main --root . init --advanced --force
+PYTHONPATH=pgsa-harness/tools/python python3 -m pgsa_cli.main --root . validate --strict-advanced
+```
+
+这些 optional folders 不是 import 系统本身，而是内置的高级项目状态分类：
+
+| Advanced folder | 用途 |
+| --- | --- |
+| `gates/` | verification blueprints 和 readiness gates。 |
+| `runtime/` | runtime profiles 和 capability contracts。 |
+| `skills/` | 已接受的 skill provenance 或 signed skill manifests。 |
+| `evidence/` | 来自外部 runtime / verification tools 的证据记录。 |
+| `factory/` | factory-style task DAGs 和 planning artifacts。 |
+| `scenarios/` | scenario tests 和 expected evidence。 |
+| `audits/` | hypothesis-only cognitive audit notes。 |
+
+Import workflow 是另一条路径。外部 repositories、skill packs、prompt packs 或 protocol folders 先进入 `pgsa/imports/`；只有审查通过后，才把选中的 metadata 或 provenance 提升到 `pgsa/skills/` 等 advanced folders。
 
 ## 多 Session 注册
 
@@ -109,9 +143,11 @@ PYTHONPATH=pgsa-harness/tools/python python3 -m pgsa_cli.main --root . session r
   --self-registered
 ```
 
-## 下一轮 Session 恢复
+## Session Handoff Snapshot
 
-每个 `pgsa/state/<session>.summary.md` 都应该保留一个 recovery snapshot：
+这里的 recovery 不是回滚代码，也不是恢复文件系统快照，而是让下一轮 agent 不用重放聊天记录也能恢复工作上下文。
+
+每个 `pgsa/state/<session>.summary.md` 都应该保留一个简短的 handoff snapshot：
 
 - current scope；
 - last known good state；
@@ -120,7 +156,7 @@ PYTHONPATH=pgsa-harness/tools/python python3 -m pgsa_cli.main --root . session r
 - open risks、blockers 或 unresolved assumptions；
 - recommended next action。
 
-这不是完整 transcript。它的目标是让下一个 Codex / Claude Code / human reviewer 快速判断哪些检查需要重跑，避免重复执行已经失败的命令。
+这不是完整 transcript。它的目标是让下一个 Codex / Claude Code / human reviewer 快速判断当前 scope、哪些检查需要重跑、哪些文件被碰过、还有哪些 risk，不再依赖私有聊天记录。
 
 ## 冲突和 Ledger 边界
 
@@ -199,7 +235,7 @@ python3 tools/scripts/verify_external_skill_imports.py
 
 ## Codex 和 Claude Code 使用方式
 
-对 Codex，把 PGSA 指导写进目标仓库的 `AGENTS.md`。对 Claude Code，把等价指导写进 `CLAUDE.md`。本仓库包含这两个文件作为示例。
+对 Codex，把 PGSA 指导写进你的项目仓库 `AGENTS.md`。对 Claude Code，把等价指导写进 `CLAUDE.md`。本仓库包含这两个文件作为示例。
 
 Codex 最小 prompt：
 
@@ -222,6 +258,12 @@ memory.
 
 多个 session 可以来自不同终端、不同 worktree 或不同 agent thread。给每个 session 一个独立 PGSA identity。
 
+## 原生 Codex 和 Codex SDK 的区别
+
+默认路径是原生 Codex / Claude Code：在你的项目仓库里打开 agent，给它一个 PGSA session identity，并要求它读取 `AGENTS.md` 或 `CLAUDE.md`、`pgsa-harness/protocol/SKILL.md`、`pgsa/sessions.yaml` 和当前 session 的 `must_read` artifacts。它完成工作后更新自己的 `must_update` artifacts。
+
+SDK 路径只在你需要“可重复、程序化启动多个已注册 session”时使用。SDK 不会比文件协议产生更强的记忆；它只是读取同一份 `pgsa/sessions.yaml`，自动构造 prompts 并启动 Codex SDK threads。
+
 ## Optional Codex SDK Demo
 
 `sdk/` 文件夹面向想使用 Codex SDK 的用户，展示如何用 SDK 启动多个已注册 PGSA session。它是 userland demo，不是 PGSA 核心路径，也不代表 OpenAI/Codex 官方集成或背书。
@@ -232,8 +274,8 @@ PGSA 支持两种 Codex 使用模式：
 
 | 模式 | 工作方式 | 适合场景 | 取舍 |
 | --- | --- | --- | --- |
-| 不使用 SDK | 用户手动启动 Codex，并给出 PGSA session prompt。 | 日常交互式工作、一次性 session、人工控制和最高透明度。 | 用户需要自己启动和协调每个 session。 |
-| 使用 SDK | `sdk/codex_pgsa_runner.py` 读取 `pgsa/sessions.yaml`，为每个 session 构造 PGSA-aware prompt，并启动 Codex SDK threads。 | 程序化编排、重复的长时间检查、CI/internal tools、稳定启动多个已注册 sessions。 | 需要可选 Codex SDK；仍然是 userland orchestration。 |
+| 原生 Codex / 不使用 SDK | 用户在项目仓库里手动启动 Codex，并给出 PGSA session prompt。 | 日常交互式工作、一次性 session、人工控制和最高透明度。 | 用户需要自己启动和协调每个 session。 |
+| 使用 Codex SDK | `sdk/codex_pgsa_runner.py` 读取 `pgsa/sessions.yaml`，为每个 session 构造 PGSA-aware prompt，并在 `--root` 指向的项目仓库里启动 Codex SDK threads。 | 程序化编排、重复的长时间检查、CI/internal tools、稳定启动多个已注册 sessions。 | 需要可选 Codex SDK；仍然是 userland orchestration，不绕过 Codex sandbox 或 approvals。 |
 
 SDK dry-run：
 
@@ -241,9 +283,17 @@ SDK dry-run：
 python3 sdk/codex_pgsa_runner.py --root . --config sdk/codex-runner.config.example.json --dry-run
 ```
 
-真实运行前需要单独安装官方 SDK：
+SDK 使用流程：
+
+1. 在你的项目仓库初始化 PGSA。
+2. 检查 `pgsa/sessions.yaml`，确认每个 session 有 role、`must_read` 和 `must_update`。
+3. 先运行 SDK dry-run，查看它将要启动的 prompts。
+4. 单独安装官方 SDK。
+5. 用 `--start-only` 创建 threads，或直接运行配置里的 session prompts。
 
 ```bash
+PYTHONPATH=pgsa-harness/tools/python python3 -m pgsa_cli.main --root . init --force
+python3 sdk/codex_pgsa_runner.py --root . --config sdk/codex-runner.config.example.json --dry-run
 pip install openai-codex
 python3 sdk/codex_pgsa_runner.py --start-only
 python3 sdk/codex_pgsa_runner.py --root . --config sdk/codex-runner.config.example.json
@@ -251,10 +301,10 @@ python3 sdk/codex_pgsa_runner.py --root . --config sdk/codex-runner.config.examp
 
 ## 快速开始
 
-把 `pgsa-harness/` 作为普通文件夹复制到目标项目：
+把 `pgsa-harness/` 作为普通文件夹复制到你已有的项目仓库：
 
 ```text
-target-project/
+your-project/
   pgsa-harness/
   pgsa/
   src/
