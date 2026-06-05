@@ -3,9 +3,9 @@
 [中文说明](README.zh-CN.md)
 
 PGSA Harness Core is an agent-first, repo-local project-coherence protocol.
-Version 1.1 keeps the core protocol file-based and embeddable, while adding
-optional advanced artifact packs for teams that need stricter verification,
-review, runtime-evidence, and planning records.
+Version 1.2 keeps the core protocol file-based and embeddable, while adding a
+review-first package-management layer for external skills/harnesses and an
+optional Codex SDK runner for repeatable multi-session orchestration.
 
 It is not a Python framework and it does not live inside any model. It lives in
 a repository as files that coding agents can read, update, diff, review, and
@@ -91,7 +91,7 @@ Core artifact roles:
 | `imports/inbox/` | Drop folder for external repos or skill packs before import processing. |
 | `imports/sources/<source_id>/` | Optional copied external source material for repo-local review. |
 
-## Built-In Packs Vs Project Imports
+## Built-In Packs Vs Project Import Packages
 
 Keep bundled PGSA material separate from user-added external material:
 
@@ -104,10 +104,18 @@ Keep bundled PGSA material separate from user-added external material:
 | target project `pgsa/skills/` | project, advanced mode | Accepted skill provenance or signed skill manifests, not raw unreviewed imports. |
 
 Raw external skills should not be mixed into the shipped `protocol/` folders.
-They should first enter `pgsa/imports/`, be reviewed by `external_import_review`
+They should
+first enter `pgsa/imports/`, be reviewed by `external_import_review`
 or a custom import-review session, and only then be promoted into project-owned
 state such as `pgsa/skills/`, roles, contracts, capabilities, merge proposals,
 or ledger events.
+
+This is PGSA's package-management boundary. External skills, prompt packs,
+harnesses, and reference protocols are treated as import packages: indexed,
+copied, reviewed, and recorded before they can affect project state. The default
+`external_import_review` session is the package-review session responsible for
+triage. It is registered like any other PGSA session, with explicit
+`must_read`, `must_update`, handoff, and ledger obligations.
 
 ## Core Workflow
 
@@ -198,10 +206,10 @@ This creates the `sessions.yaml` entry plus matching `harness/` and `state/`
 files. The new session still has explicit scope and required artifacts; it does
 not receive global authority over the repo.
 
-## External Harness Imports
+## External Skill And Harness Package Management
 
 External harnesses, skills, prompt packs, protocol folders, or docs should be
-indexed before a session uses them.
+managed as reviewable packages before a session uses them.
 
 For direct import:
 
@@ -237,7 +245,7 @@ The import command records source kind, origin path, optional local copy,
 selected files, file count, total bytes, detected skill entries, review
 artifacts, and the recommended triage session in `pgsa/imports/index.json`.
 
-The intended flow is review-first:
+The intended flow is review-first package management:
 
 1. Place or copy the external source into `pgsa/imports/inbox/`.
 2. Let `external_import_review` or another import-review session process it.
@@ -245,7 +253,7 @@ The intended flow is review-first:
 4. Run `pgsa import review <source_id>` or have the session write the same
    review artifacts manually.
 5. Promote only accepted material into contracts, summaries, roles, capability
-   manifests, merge proposals, or ledger events.
+   manifests, `pgsa/skills/`, merge proposals, or ledger events.
 
 Imported content is source material, not trusted project guidance. This keeps
 external skills from silently changing the project contract or overriding
@@ -463,22 +471,35 @@ pgsa validate --root examples/teamtask-projectboard
 The CLI is helper automation. It does not decide semantic truth, resolve merge
 conflicts, or replace agent judgment.
 
-## What v1.1 Adds
+## What v1.2 Adds
 
-Version 1.1 keeps the core protocol small, but expands the repo-local state
-model for teams that need more than basic summaries and contracts.
+Version 1.2 builds on the v1.1 protocol/advanced-pack baseline by formalizing
+two practical usage layers: optional Codex SDK orchestration and review-first
+external skill/harness package management.
 
-Compared with the previous core-only shape:
+Compared with the v1.1 baseline:
 
-| Previous baseline | v1.1 improvement |
+| v1.1 baseline | v1.2 improvement |
 | --- | --- |
-| Basic project, session, contract, review, integration, and ledger artifacts. | Clearer session registration with `must_read`, `must_update`, handoff, escalation policy, and recovery snapshots. |
-| Manual cross-session memory discipline. | Explicit semantic conflict lifecycle with `merge_proposals/`, pending ledger events, and review/integration promotion. |
-| No first-class external source intake. | Review-first import layer with `imports/inbox/`, `imports/sources/`, `imports/index.json`, `external_import_review`, and an end-to-end external skill import verifier. |
-| Agent prompts written by hand. | Concrete Codex/Claude Code prompts, plus an optional Codex SDK runner for repeatable multi-session orchestration. |
-| Mostly core artifacts. | Optional advanced packs for verification, scenario tests, review routing, runtime evidence, signed skills, factory-style plans, and cognitive audit notes. |
+| Core protocol plus optional advanced packs. | External skill/harness package management through `imports/inbox/`, `imports/sources/`, `imports/index.json`, and the dedicated `external_import_review` session. |
+| Agents could read PGSA files manually. | Concrete non-SDK prompts plus an optional Codex SDK runner that starts registered PGSA sessions repeatably from `pgsa/sessions.yaml`. |
+| Imported material could be referenced by convention. | Imported packages are copied, indexed, reviewed, summarized, and recorded in pending ledger events before promotion. |
+| Skill provenance existed as an advanced artifact shape. | Accepted import metadata can be promoted into `pgsa/skills/`; raw unreviewed external content stays out of shipped `protocol/`. |
+| Recovery and conflict artifacts existed. | README now documents the daily-use path: recovery snapshots, `must_read`/`must_update`, semantic conflicts, ledger boundaries, SDK vs non-SDK use, and import-package review. |
 
-The added v1.1 areas are:
+The v1.2 package-management path is intentionally narrow:
+
+```text
+external source
+-> pgsa/imports/inbox/
+-> pgsa import process-inbox
+-> pgsa/imports/sources/<source_id>/ + imports/index.json
+-> external_import_review session
+-> review artifacts + ledger/pending/
+-> accepted promotion into pgsa/skills, contracts, roles, capabilities, or ledger
+```
+
+The underlying v1.1 advanced areas remain:
 
 | Area | Files | What it adds |
 | --- | --- | --- |
@@ -521,8 +542,8 @@ PGSA does not replace PRs, worktrees, tests, code review, CI, security tooling,
 sandboxing, or integration agents. It adds a repo-local project-state layer that
 makes cross-session assumptions visible and recoverable.
 
-PGSA Harness Core v1.1 is a local protocol release. Advanced packs are optional
-project-state files, not mandatory services. Current evidence is local
+PGSA Harness Core v1.2 is a local protocol release. Advanced packs and import
+package management are optional project-state files and workflows, not mandatory services. Current evidence is local
 architecture-protocol and embedded-example evidence only. It is not a Codex,
 Claude Code, Grok, OpenAI, Anthropic, or hosted-product benchmark.
 
