@@ -76,14 +76,22 @@ def run_real_codex(root: Path, config: dict[str, Any], prompts: dict[str, str]) 
 
     model = config.get("model", "gpt-5.4")
     sandbox_name = config.get("sandbox", "workspace_write")
+    ephemeral = config.get("ephemeral")
     if sandbox_name not in SANDBOX_NAMES:
         raise ValueError(f"unknown sandbox preset: {sandbox_name}")
+    if ephemeral is not None and not isinstance(ephemeral, bool):
+        raise ValueError("ephemeral must be a boolean when provided")
 
     with Codex() as codex:
         for session, prompt in prompts.items():
-            thread = codex.thread_start(model=model, sandbox=sandbox_value(sandbox_name))
+            thread = codex.thread_start(
+                model=model,
+                sandbox=sandbox_value(sandbox_name),
+                cwd=str(root),
+                ephemeral=ephemeral,
+            )
             result = thread.run(prompt)
-            print(json.dumps({"session": session, "thread_id": getattr(thread, "id", None), "final_response": result.final_response}, indent=2))
+            print(json.dumps({"session": session, "thread_id": getattr(thread, "id", None), "ephemeral": ephemeral, "final_response": result.final_response}, indent=2))
     return 0
 
 
