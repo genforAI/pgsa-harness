@@ -331,7 +331,7 @@ python3 sdk/codex_pgsa_runner.py --start-only
 python3 sdk/codex_pgsa_runner.py --root . --config sdk/codex-runner.config.example.json
 ```
 
-runner 会读取 `pgsa/sessions.yaml`，为每个已注册 session 构造 PGSA-aware prompt，并要求对应 Codex thread 在 handoff 前更新自己的 `must_update` artifacts。它是 userland orchestration：PGSA 仍然是文件协议，Codex sandboxing/approvals 仍然由 Codex 负责。
+runner 会读取 `pgsa/sessions.yaml`，为每个已注册 session 构造 PGSA-aware prompt，在 `--root` 指向的目标项目根目录启动 Codex SDK thread，并要求对应 thread 在 handoff 前更新自己的 `must_update` artifacts。它是 userland orchestration：PGSA 仍然是文件协议，Codex sandboxing/approvals 仍然由 Codex 负责。临时验证可以在 SDK config 里设置 `"ephemeral": true`；如果希望 SDK 启动的 sessions 可恢复，则保持 `false`。
 
 ## 可选 Python 工具
 
