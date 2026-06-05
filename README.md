@@ -276,6 +276,7 @@ For the inbox workflow, copy or clone external sources into
 cp -R ../external-pack pgsa/imports/inbox/external_pack
 PYTHONPATH=pgsa-harness/tools/python python3 -m pgsa_cli.main --root . import process-inbox
 PYTHONPATH=pgsa-harness/tools/python python3 -m pgsa_cli.main --root . import review external_pack
+PYTHONPATH=pgsa-harness/tools/python python3 -m pgsa_cli.main --root . import promote external_pack --accept-import --applies-to backend,frontend_components
 PYTHONPATH=pgsa-harness/tools/python python3 -m pgsa_cli.main --root . import stats
 ```
 
@@ -290,6 +291,17 @@ and writes the result into `harness/<session>.md`,
 `state/<session>.summary.md`, and `ledger/pending/`. It still does not install
 or trust the imported content automatically.
 
+`import promote <source_id> --accept-import` is the accepted-provenance step.
+It writes reviewed skill metadata into `pgsa/skills/signed_skill_manifest.yaml`
+and marks the import accepted. It still does not install global skills, execute
+imported code, or copy raw external instructions into the shipped `protocol/`
+folders.
+
+Use `--applies-to` to make accepted provenance available to later sessions. For
+example, one imported package can be approved for `backend`,
+`frontend_components`, and `docs_security_integration` without giving it global
+authority over the project.
+
 The import command records source kind, origin path, optional local copy,
 selected files, file count, total bytes, detected skill entries, review
 artifacts, and the recommended triage session in `pgsa/imports/index.json`.
@@ -301,12 +313,24 @@ The intended flow is review-first package management:
 3. Let that session read `imports/index.json` and `imports/sources/<source_id>/`.
 4. Run `pgsa import review <source_id>` or have the session write the same
    review artifacts manually.
-5. Promote only accepted material into contracts, summaries, roles, capability
+5. Run `pgsa import promote <source_id> --accept-import --applies-to <sessions>` when accepted skill
+   provenance should enter `pgsa/skills/signed_skill_manifest.yaml`.
+6. Promote only accepted material into contracts, summaries, roles, capability
    manifests, `pgsa/skills/`, merge proposals, or ledger events.
 
 Imported content is source material, not trusted project guidance. This keeps
 external skills from silently changing the project contract or overriding
 current PGSA state.
+
+Dedicated import-review configuration:
+
+- `pgsa/sessions.yaml` includes `external_import_review` by default.
+- `pgsa/harness/external_import_review.md` is generated at init time as the
+  session operating file.
+- `protocol/imports/external_import_review_agent.md` contains the launch prompt
+  and step-by-step review workflow.
+- `protocol/roles/examples/external-import-review.role.yaml` is the role
+  example for custom projects that want a stronger import-review role file.
 
 To run a real external import verification against public skill sources:
 
@@ -553,7 +577,7 @@ Compared with the v1.1 baseline:
 | --- | --- |
 | Core protocol plus optional advanced packs. | External skill/harness package management through `imports/inbox/`, `imports/sources/`, `imports/index.json`, and the dedicated `external_import_review` session. |
 | Agents could read PGSA files manually. | Concrete non-SDK prompts plus an optional Codex SDK runner that starts registered PGSA sessions repeatably from `pgsa/sessions.yaml`. |
-| Imported material could be referenced by convention. | Imported packages are copied, indexed, reviewed, summarized, and recorded in pending ledger events before promotion. |
+| Imported material could be referenced by convention. | Imported packages are copied, indexed, reviewed, summarized, promoted into accepted skill provenance when approved, and recorded in pending ledger events before project activation. |
 | Skill provenance existed as an advanced artifact shape. | Accepted import metadata can be promoted into `pgsa/skills/`; raw unreviewed external content stays out of shipped `protocol/`. |
 | Recovery and conflict artifacts existed. | README now documents the daily-use path: recovery snapshots, `must_read`/`must_update`, semantic conflicts, ledger boundaries, SDK vs non-SDK use, and import-package review. |
 
@@ -566,7 +590,9 @@ external source
 -> pgsa/imports/sources/<source_id>/ + imports/index.json
 -> external_import_review session
 -> review artifacts + ledger/pending/
--> accepted promotion into pgsa/skills, contracts, roles, capabilities, or ledger
+-> pgsa import promote <source_id> --accept-import --applies-to <sessions>
+-> accepted provenance in pgsa/skills/signed_skill_manifest.yaml
+-> optional promotion into contracts, roles, capabilities, or ledger
 ```
 
 The underlying v1.1 advanced areas remain:

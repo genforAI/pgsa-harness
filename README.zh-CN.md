@@ -198,7 +198,9 @@ external source
 -> pgsa/imports/sources/<source_id>/ + imports/index.json
 -> external_import_review session
 -> review artifacts + ledger/pending/
--> accepted promotion into pgsa/skills, contracts, roles, capabilities, or ledger
+-> pgsa import promote <source_id> --accept-import --applies-to <sessions>
+-> accepted provenance in pgsa/skills/signed_skill_manifest.yaml
+-> optional promotion into contracts, roles, capabilities, or ledger
 ```
 
 默认的 `external_import_review` session 是专门负责包审查的 session。它和其他 PGSA session 一样，有明确的 `must_read`、`must_update`、handoff 和 ledger 义务。
@@ -218,12 +220,24 @@ inbox 工作流：
 cp -R ../external-pack pgsa/imports/inbox/external_pack
 PYTHONPATH=pgsa-harness/tools/python python3 -m pgsa_cli.main --root . import process-inbox
 PYTHONPATH=pgsa-harness/tools/python python3 -m pgsa_cli.main --root . import review external_pack
+PYTHONPATH=pgsa-harness/tools/python python3 -m pgsa_cli.main --root . import promote external_pack --accept-import --applies-to backend,frontend_components
 PYTHONPATH=pgsa-harness/tools/python python3 -m pgsa_cli.main --root . import stats
 ```
 
 `process-inbox` 会索引 inbox item，复制到 `pgsa/imports/sources/<source_id>/`，写入 `pgsa/imports/index.json`，并默认清理已处理的 inbox item。只有调试时才建议传 `--keep`。
 
 `import review <source_id>` 会扫描复制后的来源，识别 `SKILL.md`、README 和 schema 文件，把 import 记录更新为 `reviewed`，并把审查结果写入 `harness/<session>.md`、`state/<session>.summary.md` 和 `ledger/pending/`。这仍然不会自动安装或信任外部内容。
+
+`import promote <source_id> --accept-import` 是 accepted provenance 步骤。它会把已审查 skill metadata 写入 `pgsa/skills/signed_skill_manifest.yaml`，并把 import 标记为 accepted。它仍然不会安装全局 skills、执行外部代码，也不会把 raw external instructions 直接复制进随仓库发布的 `protocol/`。
+
+使用 `--applies-to` 可以声明这份 accepted provenance 后续允许哪些 PGSA sessions 使用。例如同一个外部 package 可以被批准给 `backend`、`frontend_components` 或 `docs_security_integration` 使用，但不会获得整个项目的全局权威。
+
+专门的 import-review 配置：
+
+- `pgsa/sessions.yaml` 默认包含 `external_import_review`。
+- `pgsa/harness/external_import_review.md` 会在 init 时生成，作为这个 session 的操作文件。
+- `protocol/imports/external_import_review_agent.md` 包含启动 prompt 和逐步 review workflow。
+- `protocol/roles/examples/external-import-review.role.yaml` 是需要更强 role 文件时可复用的示例。
 
 要运行真实外部导入验证：
 
@@ -340,7 +354,7 @@ pgsa --root examples/teamtask-projectboard drift-report
 | --- | --- |
 | core protocol plus optional advanced packs。 | 通过 `imports/inbox/`、`imports/sources/`、`imports/index.json` 和专门的 `external_import_review` session 管理外部 skill / harness packages。 |
 | agents 可以手动读取 PGSA 文件。 | 增加具体非 SDK prompts 和可选 Codex SDK runner，可根据 `pgsa/sessions.yaml` 重复启动已注册 PGSA sessions。 |
-| 外部材料主要靠约定引用。 | 外部 packages 先复制、索引、审查、总结，并写入 pending ledger events 后才允许提升。 |
+| 外部材料主要靠约定引用。 | 外部 packages 先复制、索引、审查、总结；通过 `import promote` 写入 accepted skill provenance 后，才允许进入项目状态。 |
 | signed skill provenance 是 advanced artifact shape。 | 已接受 import metadata 可以提升到 `pgsa/skills/`；未审查 raw external content 不进入随仓库发布的 `protocol/`。 |
 | 已有 recovery 和 conflict artifacts。 | README 明确 daily-use 路径：recovery snapshots、`must_read` / `must_update`、semantic conflicts、ledger boundaries、SDK vs non-SDK 使用，以及 import-package review。 |
 
