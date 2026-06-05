@@ -91,6 +91,24 @@ Core artifact roles:
 | `imports/inbox/` | Drop folder for external repos or skill packs before import processing. |
 | `imports/sources/<source_id>/` | Optional copied external source material for repo-local review. |
 
+## Built-In Packs Vs Project Imports
+
+Keep bundled PGSA material separate from user-added external material:
+
+| Location | Owner | Purpose |
+| --- | --- | --- |
+| `protocol/capabilities/`, `protocol/adapters/`, `protocol/templates/`, `protocol/schemas/` | PGSA harness | Shipped reference artifact shapes and optional advanced packs. |
+| target project `pgsa/imports/inbox/` | user / importing agent | Temporary drop folder for external repos, skills, prompt packs, or docs. |
+| target project `pgsa/imports/sources/<source_id>/` | project | Reviewable local copy of imported external material. |
+| target project `pgsa/imports/index.json` | project | Import registry: source metadata, selected files, detected skills, review state, and triage session. |
+| target project `pgsa/skills/` | project, advanced mode | Accepted skill provenance or signed skill manifests, not raw unreviewed imports. |
+
+Raw external skills should not be mixed into the shipped `protocol/` folders.
+They should first enter `pgsa/imports/`, be reviewed by `external_import_review`
+or a custom import-review session, and only then be promoted into project-owned
+state such as `pgsa/skills/`, roles, contracts, capabilities, merge proposals,
+or ledger events.
+
 ## Core Workflow
 
 Every agent session follows the same loop:
@@ -387,6 +405,17 @@ through the Codex SDK. It is a userland demo, not the core PGSA path and not an
 OpenAI endorsement or integration claim. The SDK reference is
 <https://developers.openai.com/codex/sdk#python-library>.
 
+PGSA supports two Codex usage modes:
+
+| Mode | How it works | Best for | Tradeoff |
+| --- | --- | --- | --- |
+| Without SDK | Start Codex manually and give it a PGSA session prompt, for example `Use PGSA session backend...`. Codex reads `AGENTS.md`, `protocol/SKILL.md`, and `pgsa/` artifacts directly. | Normal interactive work, one-off sessions, manual control, and maximum transparency. | The user starts and coordinates each session manually. |
+| With SDK | `sdk/codex_pgsa_runner.py` reads `pgsa/sessions.yaml`, builds one PGSA-aware prompt per session, starts Codex SDK threads in the target `--root`, and asks each thread to update `must_update` artifacts. | Programmatic orchestration, repeated long-running checks, CI/internal tools, and launching multiple registered sessions consistently. | Requires the optional Codex SDK and remains userland orchestration; PGSA still does not bypass Codex sandboxing or approvals. |
+
+The SDK advantage is repeatability. It turns the same repo-local PGSA session
+registry into consistent Codex thread starts, while the non-SDK path remains the
+plain file/protocol workflow for everyday interactive use.
+
 ```bash
 python3 sdk/codex_pgsa_runner.py --root . --config sdk/codex-runner.config.example.json --dry-run
 ```
@@ -436,8 +465,20 @@ conflicts, or replace agent judgment.
 
 ## What v1.1 Adds
 
-Version 1.1 keeps the core protocol small, but adds optional project-state
-layers for teams that want more than session summaries and contracts:
+Version 1.1 keeps the core protocol small, but expands the repo-local state
+model for teams that need more than basic summaries and contracts.
+
+Compared with the previous core-only shape:
+
+| Previous baseline | v1.1 improvement |
+| --- | --- |
+| Basic project, session, contract, review, integration, and ledger artifacts. | Clearer session registration with `must_read`, `must_update`, handoff, escalation policy, and recovery snapshots. |
+| Manual cross-session memory discipline. | Explicit semantic conflict lifecycle with `merge_proposals/`, pending ledger events, and review/integration promotion. |
+| No first-class external source intake. | Review-first import layer with `imports/inbox/`, `imports/sources/`, `imports/index.json`, `external_import_review`, and an end-to-end external skill import verifier. |
+| Agent prompts written by hand. | Concrete Codex/Claude Code prompts, plus an optional Codex SDK runner for repeatable multi-session orchestration. |
+| Mostly core artifacts. | Optional advanced packs for verification, scenario tests, review routing, runtime evidence, signed skills, factory-style plans, and cognitive audit notes. |
+
+The added v1.1 areas are:
 
 | Area | Files | What it adds |
 | --- | --- | --- |
