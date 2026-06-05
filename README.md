@@ -400,9 +400,12 @@ python3 sdk/codex_pgsa_runner.py --root . --config sdk/codex-runner.config.examp
 ```
 
 The runner reads `pgsa/sessions.yaml`, builds one PGSA-aware prompt per
-registered session, and asks each Codex thread to update its `must_update`
-artifacts before handoff. It stays userland orchestration: PGSA remains the file
-protocol, and Codex sandboxing/approvals remain Codex's responsibility.
+registered session, starts each Codex SDK thread in the target project root
+passed by `--root`, and asks each thread to update its `must_update` artifacts
+before handoff. It stays userland orchestration: PGSA remains the file protocol,
+and Codex sandboxing/approvals remain Codex's responsibility. For temporary
+verification runs, set `"ephemeral": true` in the SDK config; leave it `false`
+when SDK-run sessions should remain resumable.
 
 ## Optional Python Tools
 
