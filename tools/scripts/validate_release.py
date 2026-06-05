@@ -49,6 +49,7 @@ ALLOWED_ROOT_ENTRIES = {
     "VERSION",
     "examples",
     "protocol",
+    "sdk",
     "tools",
 }
 
