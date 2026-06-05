@@ -369,11 +369,11 @@ For Codex subagent workflows, keep the parent session as the integrator and ask
 subagents to return PGSA-ready summaries instead of writing every artifact
 directly.
 
-## Codex SDK Demo
+## Optional Codex SDK Demo
 
-The optional `sdk/` folder shows how PGSA can drive multiple registered sessions
-through the official Codex SDK without changing the core protocol. The SDK
-surface follows the official Python library documented at
+The optional `sdk/` folder is for users who already want to run PGSA sessions
+through the Codex SDK. It is a userland demo, not the core PGSA path and not an
+OpenAI endorsement or integration claim. The SDK reference is
 <https://developers.openai.com/codex/sdk#python-library>.
 
 ```bash
@@ -388,10 +388,10 @@ python3 sdk/codex_pgsa_runner.py --start-only
 python3 sdk/codex_pgsa_runner.py --root . --config sdk/codex-runner.config.example.json
 ```
 
-The runner reads `pgsa/sessions.yaml`, builds one PGSA-aware prompt per session,
-and asks each Codex thread to update its `must_update` artifacts before handoff.
-It stays userland orchestration: PGSA remains the file protocol, and Codex
-sandboxing/approvals remain Codex's responsibility.
+The runner reads `pgsa/sessions.yaml`, builds one PGSA-aware prompt per
+registered session, and asks each Codex thread to update its `must_update`
+artifacts before handoff. It stays userland orchestration: PGSA remains the file
+protocol, and Codex sandboxing/approvals remain Codex's responsibility.
 
 ## Optional Python Tools
 
