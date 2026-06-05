@@ -303,9 +303,9 @@ Claude Code 可以用同样方式启动：`claude "Use PGSA session ..."`。
 
 对于 Codex subagent workflow，建议让 parent session 作为 integrator，让 subagents 返回 PGSA-ready summaries，而不是让每个 subagent 都直接写所有 artifacts。
 
-## Codex SDK Demo
+## 可选 Codex SDK Demo
 
-可选的 `sdk/` 文件夹展示了如何通过官方 Codex SDK 启动多个已注册 PGSA session，同时不改变核心协议。SDK 入口对应官方 Python library 文档：
+可选的 `sdk/` 文件夹面向已经想使用 Codex SDK 的用户，展示如何用 SDK 启动多个已注册 PGSA session。它是 userland demo，不是 PGSA 核心路径，也不代表 OpenAI/Codex 官方集成或背书。SDK 参考文档是：
 <https://developers.openai.com/codex/sdk#python-library>。
 
 ```bash
@@ -320,7 +320,7 @@ python3 sdk/codex_pgsa_runner.py --start-only
 python3 sdk/codex_pgsa_runner.py --root . --config sdk/codex-runner.config.example.json
 ```
 
-runner 会读取 `pgsa/sessions.yaml`，为每个 session 构造 PGSA-aware prompt，并要求对应 Codex thread 在 handoff 前更新自己的 `must_update` artifacts。它是 userland orchestration：PGSA 仍然是文件协议，Codex sandboxing/approvals 仍然由 Codex 负责。
+runner 会读取 `pgsa/sessions.yaml`，为每个已注册 session 构造 PGSA-aware prompt，并要求对应 Codex thread 在 handoff 前更新自己的 `must_update` artifacts。它是 userland orchestration：PGSA 仍然是文件协议，Codex sandboxing/approvals 仍然由 Codex 负责。
 
 ## 可选 Python 工具
 
