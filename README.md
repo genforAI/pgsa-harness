@@ -58,6 +58,9 @@ pgsa/
   reviews/
   integration/
   ledger/
+  imports/
+    inbox/
+    sources/
   reports/
 
   # optional advanced mode
@@ -84,6 +87,9 @@ Core artifact roles:
 | `integration/integration_report.json` | Current integration readiness, blockers, open merge proposals, and contract review state. |
 | `ledger/coherence_ledger.jsonl` | Append-only accepted project-coherence events. |
 | `ledger/pending/*.json` | Per-session event drafts for parallel runs, promoted by review/integration. |
+| `imports/index.json` | External harness/skill/protocol import index, reviewed before activation. |
+| `imports/inbox/` | Drop folder for external repos or skill packs before import processing. |
+| `imports/sources/<source_id>/` | Optional copied external source material for repo-local review. |
 
 ## Core Workflow
 
@@ -148,10 +154,75 @@ frontend_components
 docs_security_integration
   reads contracts, summaries, reviews, merge proposals, integration state,
   and ledger before deciding readiness
+
+external_import_review
+  triages imported harnesses, skill packs, protocols, and docs before promotion
 ```
 
 The registration tells Codex, Claude Code, or another coding-agent session what
 it owns, what it must inspect, and what it must update before handoff.
+
+PGSA includes a default active `external_import_review` session for import
+triage. Agents can also register a new identity when the user asks for a custom
+role:
+
+```bash
+PYTHONPATH=pgsa-harness/tools/python python3 -m pgsa_cli.main --root . session register research_import \
+  --role external-skill-review \
+  --scope "triage imported skills and protocols" \
+  --must-read imports/index.json,imports/sources/external_pack/ \
+  --must-update state/research_import.summary.md,ledger/pending/ \
+  --handoff-to docs_security_integration \
+  --self-registered
+```
+
+This creates the `sessions.yaml` entry plus matching `harness/` and `state/`
+files. The new session still has explicit scope and required artifacts; it does
+not receive global authority over the repo.
+
+## External Harness Imports
+
+External harnesses, skills, prompt packs, protocol folders, or docs should be
+indexed before a session uses them.
+
+For direct import:
+
+```bash
+PYTHONPATH=pgsa-harness/tools/python python3 -m pgsa_cli.main --root . import add external_pack \
+  --path ../external-pack \
+  --kind skill_pack \
+  --session external_import_review
+```
+
+For the inbox workflow, copy or clone external sources into
+`pgsa/imports/inbox/`, then process the inbox:
+
+```bash
+cp -R ../external-pack pgsa/imports/inbox/external_pack
+PYTHONPATH=pgsa-harness/tools/python python3 -m pgsa_cli.main --root . import process-inbox
+PYTHONPATH=pgsa-harness/tools/python python3 -m pgsa_cli.main --root . import stats
+```
+
+`process-inbox` indexes each inbox item, copies it into
+`pgsa/imports/sources/<source_id>/`, records it in `pgsa/imports/index.json`,
+and clears the processed inbox item by default. Pass `--keep` only when you are
+debugging.
+
+The import command records source kind, origin path, optional local copy,
+selected files, file count, total bytes, and the recommended triage session in
+`pgsa/imports/index.json`.
+
+The intended flow is review-first:
+
+1. Place or copy the external source into `pgsa/imports/inbox/`.
+2. Let `external_import_review` or another import-review session process it.
+3. Let that session read `imports/index.json` and `imports/sources/<source_id>/`.
+4. Promote only accepted material into contracts, summaries, roles, capability
+   manifests, merge proposals, or ledger events.
+
+Imported content is source material, not trusted project guidance. This keeps
+external skills from silently changing the project contract or overriding
+current PGSA state.
 
 ## Conflict Lifecycle And Ledger Boundary
 
@@ -288,6 +359,27 @@ Claude Code can be launched the same way with `claude "Use PGSA session ..."`.
 For Codex subagent workflows, keep the parent session as the integrator and ask
 subagents to return PGSA-ready summaries instead of writing every artifact
 directly.
+
+## Codex SDK Demo
+
+The optional `sdk/` folder shows how PGSA can drive multiple registered sessions
+through the official Codex SDK without changing the core protocol:
+
+```bash
+python3 sdk/codex_pgsa_runner.py --root . --config sdk/codex-runner.config.example.json --dry-run
+```
+
+For a real SDK run, install the official SDK separately:
+
+```bash
+pip install openai-codex
+python3 sdk/codex_pgsa_runner.py --root . --config sdk/codex-runner.config.example.json
+```
+
+The runner reads `pgsa/sessions.yaml`, builds one PGSA-aware prompt per session,
+and asks each Codex thread to update its `must_update` artifacts before handoff.
+It stays userland orchestration: PGSA remains the file protocol, and Codex
+sandboxing/approvals remain Codex's responsibility.
 
 ## Optional Python Tools
 
