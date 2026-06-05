@@ -1,0 +1,21 @@
+role_id: external-import-review
+description: Reviews imported external skills, harnesses, protocol folders, and docs before project activation.
+scope:
+  - external harness import
+  - skill pack triage
+  - protocol compatibility review
+  - accepted import provenance
+external_bindings:
+  agent_protocol: protocol/SKILL.md
+  import_agent_guide: protocol/imports/external_import_review_agent.md
+must_update:
+  - pgsa/imports/index.json
+  - pgsa/harness/external_import_review.md
+  - pgsa/state/external_import_review.summary.md
+  - pgsa/ledger/pending/
+  - pgsa/skills/signed_skill_manifest.yaml
+escalates_when:
+  - imported content conflicts with existing project contracts
+  - imported skill behavior changes session scope
+  - external protocol assumptions are incompatible with PGSA state
+  - imported content should be rejected or quarantined
