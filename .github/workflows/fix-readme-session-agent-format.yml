@@ -1,0 +1,48 @@
+name: fix-readme-session-agent-format
+
+on:
+  push:
+    paths:
+      - .github/workflows/fix-readme-session-agent-format.yml
+
+permissions:
+  contents: write
+
+jobs:
+  apply:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Fix wrapped session-agent command
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          old = 'PYTHONPATH=pgsa-harness/tools/python python3 -m pgsa_cli.main --root target-project   session-agent create backend   --out ../agent-sessions/backend   --harness-root ../pgsa-harness'
+          new = (
+              'PYTHONPATH=pgsa-harness/tools/python python3 -m pgsa_cli.main --root target-project \\\n'
+              '  session-agent create backend \\\n'
+              '  --out ../agent-sessions/backend \\\n'
+              '  --harness-root ../pgsa-harness'
+          )
+          for name in ['README.md', 'README.zh-CN.md']:
+              path = Path(name)
+              text = path.read_text()
+              if old not in text:
+                  raise SystemExit(f'wrapped command marker not found in {name}')
+              path.write_text(text.replace(old, new))
+          PY
+      - name: Remove one-off workflow
+        run: rm .github/workflows/fix-readme-session-agent-format.yml
+      - name: Verify
+        run: |
+          PYTHONPATH=tools/python python3 -m unittest discover -s tools/python/tests -t tools/python
+          find tools/python -type d -name __pycache__ -prune -exec rm -rf {} +
+          python3 tools/scripts/validate_release.py --root .
+          PYTHONPATH=tools/python python3 -m pgsa_cli.main --root examples/teamtask-projectboard validate --strict-advanced
+      - name: Commit final format fix
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add README.md README.zh-CN.md .github/workflows/fix-readme-session-agent-format.yml
+          git commit -m "Fix session agent README command formatting"
+          git push
