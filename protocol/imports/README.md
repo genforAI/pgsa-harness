@@ -1,9 +1,10 @@
-# External Harness Import
+# External Skill And Harness Package Management
 
 PGSA can index external harnesses, skill packs, protocol folders, or reference
-docs without making them active project truth immediately.
+docs without making them active project truth immediately. In v1.2 this layer is
+the review-first package-management path for user-added skills and harnesses.
 
-The import layer has two parts:
+The import layer has four parts:
 
 - `pgsa/imports/index.json`: the registry of imported sources, file counts,
   selected files, status, and the session responsible for triage.
@@ -12,6 +13,9 @@ The import layer has two parts:
 - `pgsa/imports/sources/<source_id>/`: an optional local copy of the imported
   source, used when the project wants the external material to be reviewable in
   the same repository.
+- `external_import_review`: the default package-review session registered in
+  `pgsa/sessions.yaml`, responsible for triaging imports and writing review
+  artifacts before promotion.
 
 Importing is intentionally review-first:
 
@@ -53,6 +57,9 @@ review artifacts and pending ledger events exist, and validates the resulting
 PGSA project.
 
 This creates an explicit integration trail, not an automatic plugin loader.
+Accepted import metadata can later be promoted into `pgsa/skills/`, role files,
+contracts, capability manifests, or ledger decisions. Raw unreviewed external
+content stays in `pgsa/imports/sources/<source_id>/`.
 
 ## Management Boundary
 
