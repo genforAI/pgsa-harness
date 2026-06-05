@@ -313,9 +313,8 @@ review/integration session promotes accepted events into the coherence ledger.
 
 ## Why This Is Not PR Automation
 
-PGSA is not a PR merge agent and does not auto-resolve Git conflicts or merge
-code. PRs are still the right place to review a code diff, run CI, discuss
-implementation, and merge changes.
+PGSA is not trying to replace pull requests. PRs are still the right place to
+review a code diff, run CI, discuss implementation, and merge changes.
 
 PGSA records the project-state that coding-agent sessions need before a PR is
 ready:
@@ -391,4 +390,163 @@ memory.
 ```
 
 Multiple sessions can run from separate terminals, separate worktrees, or
-separate agent threads. Give each one a distinct PGSA ¥‘•¹Ñ¥Ñäè()‰…Í )½‘•à€‰UÍ”AMÍ•ÍÍ¥½¸‰…­•¹¸I•…9QL¹µ°ÁÍ„µ¡…É¹•ÍÌ½ÁÉ½Ñ½½°½M-%10¹µ°ÁÍ„½Í•ÍÍ¥½¹Ì¹å…µ°°…¹Ñ¡”‰…­•¹µÕÍÑ}É•……ÉÑ¥™…ÑÌ¸UÁ‘…Ñ”‰…­•¹µÕÍÑ}ÕÁ‘…Ñ”…ÉÑ¥™…ÑÌ‰•™½É”¡…¹‘½™˜¸ˆ()½‘•à€‰UÍ”AMÍ•ÍÍ¥½¸™É½¹Ñ•¹‘}½µÁ½¹•¹ÑÌ¸I•…9QL¹µ°ÁÍ„µ¡…É¹•ÍÌ½ÁÉ½Ñ½½°½M-%10¹µ°ÁÍ„½Í•ÍÍ¥½¹Ì¹å…µ°°™É½¹Ñ•¹‘}½µÁ½¹•¹ÑÌµÕÍÑ}É•……ÉÑ¥™…ÑÌ°…¹‰…­•¹½¹ÑÉ…ĞÍÑ…Ñ”¸UÁ‘…Ñ”™É½¹Ñ•¹µÕÍÑ}ÕÁ‘…Ñ”…ÉÑ¥™…ÑÌ‰•™½É”¡…¹‘½™˜¸ˆ()½‘•à€‰UÍ”AMÍ•ÍÍ¥½¸‘½Í}Í•ÕÉ¥Ñå}¥¹Ñ•É…Ñ¥½¸¸I•…9QL¹µ°ÁÍ„µ¡…É¹•ÍÌ½ÁÉ½Ñ½½°½M-%10¹µ°…±°ÍÕµµ…É¥•Ì°É•Ù¥•İÌ°½¹ÑÉ…ÑÌ°µ•É”ÁÉ½Á½Í…±Ì°¥¹Ñ•É…Ñ¥½¸ÍÑ…Ñ”°…¹±•‘•È¸•¥‘”É•…‘¥¹•ÍÌ…¹‰±½¬¥¹Ñ•É…Ñ¥½¸¥˜Õ¹É•Í½±Ù•Í•µ…¹Ñ¥Œ‘É¥™ĞÉ•µ…¥¹Ì¸ˆ)€()±…Õ‘”½‘”…¸‰”±…Õ¹¡•Ñ¡”Í…µ”İ…äİ¥Ñ ±…Õ‘”€‰UÍ”AMÍ•ÍÍ¥½¸€¸¸¸‰€¸()½È½‘•àÍÕ‰…•¹Ğİ½É­™±½İÌ°­••ÀÑ¡”Á…É•¹ĞÍ•ÍÍ¥½¸…ÌÑ¡”¥¹Ñ•É…Ñ½È…¹…Í¬)ÍÕ‰…•¹ÑÌÑ¼É•ÑÕÉ¸AMµÉ•…‘äÍÕµµ…É¥•Ì¥¹ÍÑ•…½˜İÉ¥Ñ¥¹œ•Ù•Éä…ÉÑ¥™…Ğ)‘¥É•Ñ±ä¸((ŒŒ=ÁÑ¥½¹…°½‘•àM,•µ¼()Q¡”½ÁÑ¥½¹…°Í‘¬½€™½±‘•È¥Ì™½ÈÕÍ•ÉÌİ¡¼…±É•…‘äİ…¹ĞÑ¼ÉÕ¸AMÍ•ÍÍ¥½¹Ì)Ñ¡É½Õ Ñ¡”½‘•àM,¸%Ğ¥Ì„ÕÍ•É±…¹‘•µ¼°¹½ĞÑ¡”½É”AMÁ…Ñ …¹¹½Ğ…¸)=Á•¹$•¹‘½ÉÍ•µ•¹Ğ½È¥¹Ñ•É…Ñ¥½¸±…¥´¸Q¡”M,É•™•É•¹”¥Ì(ñ¡ÑÑÁÌè¼½‘•Ù•±½Á•ÉÌ¹½Á•¹…¤¹½´½½‘•à½Í‘¬ÁåÑ¡½¸µ±¥‰É…Éäø¸()AMÍÕÁÁ½ÉÑÌÑİ¼½‘•àÕÍ…”µ½‘•Ìè()ğ5½‘”ğ!½Ü¥Ğİ½É­Ìğ	•ÍĞ™½ÈğQÉ…‘•½™˜ğ)ğ€´´´ğ€´´´ğ€´´´ğ€´´´ğ)ğ]¥Ñ¡½ÕĞM,ğMÑ…ÉĞ½‘•àµ…¹Õ…±±ä…¹¥Ù”¥Ğ„AMÍ•ÍÍ¥½¸ÁÉ½µÁĞ°™½È•á…µÁ±”UÍ”AMÍ•ÍÍ¥½¸‰…­•¹¸¸¹€¸½‘•àÉ•…‘Ì9QL¹µ‘€°ÁÉ½Ñ½½°½M-%10¹µ‘€°…¹ÁÍ„½€…ÉÑ¥™…ÑÌ‘¥É•Ñ±ä¸ğ9½Éµ…°¥¹Ñ•É…Ñ¥Ù”İ½É¬°½¹”µ½™˜Í•ÍÍ¥½¹Ì°µ…¹Õ…°½¹ÑÉ½°°…¹µ…á¥µÕ´ÑÉ…¹ÍÁ…É•¹ä¸ğQ¡”ÕÍ•ÈÍÑ…ÉÑÌ…¹½½É‘¥¹…Ñ•Ì•… Í•ÍÍ¥½¸µ…¹Õ…±±ä¸ğ)ğ]¥Ñ M,ğÍ‘¬½½‘•á}ÁÍ…}ÉÕ¹¹•È¹Áå€É•…‘ÌÁÍ„½Í•ÍÍ¥½¹Ì¹å…µ±€°‰Õ¥±‘Ì½¹”AMµ…İ…É”ÁÉ½µÁĞÁ•ÈÍ•ÍÍ¥½¸°ÍÑ…ÉÑÌ½‘•àM,Ñ¡É•…‘Ì¥¸Ñ¡”Ñ…É•Ğ€´µÉ½½Ñ€°…¹…Í­Ì•… Ñ¡É•…Ñ¼ÕÁ‘…Ñ”µÕÍÑ}ÕÁ‘…Ñ•€…ÉÑ¥™…ÑÌ¸ğAÉ½É…µµ…Ñ¥Œ½É¡•ÍÑÉ…Ñ¥½¸°É•Á•…Ñ•±½¹œµÉÕ¹¹¥¹œ¡•­Ì°$½¥¹Ñ•É¹…°Ñ½½±Ì°…¹±…Õ¹¡¥¹œµÕ±Ñ¥Á±”É•¥ÍÑ•É•Í•ÍÍ¥½¹Ì½¹Í¥ÍÑ•¹Ñ±ä¸ğI•ÅÕ¥É•ÌÑ¡”½ÁÑ¥½¹…°½‘•àM,…¹É•µ…¥¹ÌÕÍ•É±…¹½É¡•ÍÑÉ…Ñ¥½¸ìAMÍÑ¥±°‘½•Ì¹½Ğ‰åÁ…ÍÌ½‘•àÍ…¹‘‰½á¥¹œ½È…ÁÁÉ½Ù…±Ì¸ğ()Q¡”M,…‘Ù…¹Ñ…”¥ÌÉ•Á•…Ñ…‰¥±¥Ñä¸%ĞÑÕÉ¹ÌÑ¡”Í…µ”É•Á¼µ±½…°AMÍ•ÍÍ¥½¸)É•¥ÍÑÉä¥¹Ñ¼½¹Í¥ÍÑ•¹Ğ½‘•àÑ¡É•…ÍÑ…ÉÑÌ°İ¡¥±”Ñ¡”¹½¸µM,Á…Ñ É•µ…¥¹ÌÑ¡”)Á±…¥¸™¥±”½ÁÉ½Ñ½½°İ½É­™±½Ü™½È•Ù•Éå‘…ä¥¹Ñ•É…Ñ¥Ù”ÕÍ”¸()‰…Í )ÁåÑ¡½¸ÌÍ‘¬½½‘•á}ÁÍ…}ÉÕ¹¹•È¹Áä€´µÉ½½Ğ€¸€´µ½¹™¥œÍ‘¬½½‘•àµÉÕ¹¹•È¹½¹™¥œ¹•á…µÁ±”¹©Í½¸€´µ‘ÉäµÉÕ¸)€()½È„É•…°M,ÉÕ¸°¥¹ÍÑ…±°Ñ¡”½™™¥¥…°M,Í•Á…É…Ñ•±äè()‰…Í )Á¥À¥¹ÍÑ…±°½Á•¹…¤µ½‘•à)ÁåÑ¡½¸ÌÍ‘¬½½‘•á}ÁÍ…}ÉÕ¹¹•È¹Áä€´µÍÑ…ÉĞµ½¹±ä)ÁåÑ¡½¸ÌÍ‘¬½½‘•á}ÁÍ…}ÉÕ¹¹•È¹Áä€´µÉ½½Ğ€¸€´µ½¹™¥œÍ‘¬½½‘•àµÉÕ¹¹•È¹½¹™¥œ¹•á…µÁ±”¹©Í½¸)€()Q¡”ÉÕ¹¹•ÈÉ•…‘ÌÁÍ„½Í•ÍÍ¥½¹Ì¹å…µ±€°‰Õ¥±‘Ì½¹”AMµ…İ…É”ÁÉ½µÁĞÁ•È)É•¥ÍÑ•É•Í•ÍÍ¥½¸°ÍÑ…ÉÑÌ•… ½‘•àM,Ñ¡É•…¥¸Ñ¡”Ñ…É•ĞÁÉ½©•ĞÉ½½Ğ)Á…ÍÍ•‰ä€´µÉ½½Ñ€°…¹…Í­Ì•… Ñ¡É•…Ñ¼ÕÁ‘…Ñ”¥ÑÌµÕÍÑ}ÕÁ‘…Ñ•€…ÉÑ¥™…ÑÌ)‰•™½É”¡…¹‘½™˜¸%ĞÍÑ…åÌÕÍ•É±…¹½É¡•ÍÑÉ…Ñ¥½¸èAMÉ•µ…¥¹ÌÑ¡”™¥±”ÁÉ½Ñ½½°°)…¹½‘•àÍ…¹‘‰½á¥¹œ½…ÁÁÉ½Ù…±ÌÉ•µ…¥¸½‘•àÌÉ•ÍÁ½¹Í¥‰¥±¥Ñä¸½ÈÑ•µÁ½É…Éä)Ù•É¥™¥…Ñ¥½¸ÉÕ¹Ì°Í•Ğ€‰•Á¡•µ•É…°ˆèÑÉÕ•€¥¸Ñ¡”M,½¹™¥œì±•…Ù”¥Ğ™…±Í•€)İ¡•¸M,µÉÕ¸Í•ÍÍ¥½¹ÌÍ¡½Õ±¥É•µ…¥¸É•ÍÕµ…‰±”¸((ŒŒ=ÁÑ¥½¹…°AåÑ¡½¸Q½½±Ì()Q¡”½ÁÑ¥½¹…°1$…¸¥¹¥Ñ¥…±¥é”…¹Ù…±¥‘…Ñ”AM…ÉÑ¥™…ÑÌ™½ÈÕÍ•ÉÌè()‰…Í )ÁåÑ¡½¸Ì€µ´Á¥À¥¹ÍÑ…±°€€µ”Ñ½½±Ì½ÁåÑ¡½¸)ÁÍ„€´µÉ½½Ğ•á…µÁ±•Ì½Ñ•…µÑ…Í¬µÁÉ½©•Ñ‰½…ÉÙ…±¥‘…Ñ”)ÁÍ„€´µÉ½½Ğ•á…µÁ±•Ì½Ñ•…µÑ…Í¬µÁÉ½©•Ñ‰½…É‘É¥™ĞµÉ•Á½ÉĞ)ÁÍ„€´µÉ½½Ğ€½ÑµÀ½ÁÍ„µ‘•µ¼¥¹¥Ğ€´µ™½É”)€()]¥Ñ¡½ÕĞ¥¹ÍÑ…±±¥¹œè()‰…Í )AeQ!=9AQ õÑ½½±Ì½ÁåÑ¡½¸ÁåÑ¡½¸Ì€µ´ÁÍ…}±¤¹µ…¥¸€´µÉ½½Ğ•á…µÁ±•Ì½Ñ•…µÑ…Í¬µÁÉ½©•Ñ‰½…ÉÍÑ…ÑÕÌ)€()½È½¹Ù•¹¥•¹”°€´µÉ½½Ñ€¥Ì…•ÁÑ•‰•™½É”½È…™Ñ•ÈÑ¡”ÍÕ‰½µµ…¹è()‰…Í )ÁÍ„€´µÉ½½Ğ•á…µÁ±•Ì½Ñ•…µÑ…Í¬µÁÉ½©•Ñ‰½…ÉÙ…±¥‘…Ñ”)ÁÍ„Ù…±¥‘…Ñ”€´µÉ½½Ğ•á…µÁ±•Ì½Ñ•…µÑ…Í¬µÁÉ½©•Ñ‰½…É)€()Q¡”1$¥Ì¡•±Á•È…ÕÑ½µ…Ñ¥½¸¸%Ğ‘½•Ì¹½Ğ‘•¥‘”Í•µ…¹Ñ¥ŒÑÉÕÑ °É•Í½±Ù”µ•É”)½¹™±¥ÑÌ°½ÈÉ•Á±…”…•¹Ğ©Õ‘µ•¹Ğ¸((ŒŒ]¡…ĞØÄ¸È‘‘Ì()Y•ÉÍ¥½¸€Ä¸È‰Õ¥±‘Ì½¸Ñ¡”ØÄ¸ÄÁÉ½Ñ½½°½…‘Ù…¹•µÁ…¬‰…Í•±¥¹”‰ä™½Éµ…±¥é¥¹œ)Ñİ¼ÁÉ…Ñ¥…°ÕÍ…”±…å•ÉÌè½ÁÑ¥½¹…°½‘•àM,½É¡•ÍÑÉ…Ñ¥½¸…¹É•Ù¥•Üµ™¥ÉÍĞ)•áÑ•É¹…°Í­¥±°½¡…É¹•ÍÌÁ…­…”µ…¹…•µ•¹Ğ¸()½µÁ…É•İ¥Ñ Ñ¡”ØÄ¸Ä‰…Í•±¥¹”è()ğ€Ä¸Ä‰…Í•±¥¹”ğ€Ä¸È¥µÁÉ½Ù•µ•¹Ğğ)ğ€´´´ğ€´´´ğ)ğ½É”ÁÉ½Ñ½½°Á±ÕÌ½ÁÑ¥½¹…°…‘Ù…¹•Á…­Ì¸ğáÑ•É¹…°Í­¥±°½¡…É¹•ÍÌÁ…­…”µ…¹…•µ•¹ĞÑ¡É½Õ ¥µÁ½ÉÑÌ½¥¹‰½à½€°¥µÁ½ÉÑÌ½Í½ÕÉ•Ì½€°¥µÁ½ÉÑÌ½¥¹‘•à¹©Í½¹€°…¹Ñ¡”‘•‘¥…Ñ••áÑ•É¹…±}¥µÁ½ÉÑ}É•Ù¥•İ€Í•ÍÍ¥½¸¸ğ)ğ•¹ÑÌ½Õ±É•…AM™¥±•Ìµ…¹Õ…±±ä¸ğ½¹É•Ñ”¹½¸µM,ÁÉ½µÁÑÌÁ±ÕÌ…¸½ÁÑ¥½¹…°½‘•àM,ÉÕ¹¹•ÈÑ¡…ĞÍÑ…ÉÑÌÉ•¥ÍÑ•É•AMÍ•ÍÍ¥½¹ÌÉ•Á•…Ñ…‰±ä™É½´ÁÍ„½Í•ÍÍ¥½¹Ì¹å…µ±€¸ğ)ğ%µÁ½ÉÑ•µ…Ñ•É¥…°½Õ±‰”É•™•É•¹•‰ä½¹Ù•¹Ñ¥½¸¸ğ%µÁ½ÉÑ•Á…­…•Ì…É”½Á¥•°¥¹‘•á•°É•Ù¥•İ•°ÍÕµµ…É¥é•°…¹É•½É‘•¥¸Á•¹‘¥¹œ±•‘•È•Ù•¹ÑÌ‰•™½É”ÁÉ½µ½Ñ¥½¸¸ğ)ğM­¥±°ÁÉ½Ù•¹…¹”•á¥ÍÑ•…Ì…¸…‘Ù…¹•…ÉÑ¥™…ĞÍ¡…Á”¸ğ•ÁÑ•¥µÁ½ÉĞµ•Ñ…‘…Ñ„…¸‰”ÁÉ½µ½Ñ•¥¹Ñ¼ÁÍ„½Í­¥±±Ì½€ìÉ…ÜÕ¹É•Ù¥•İ••áÑ•É¹…°½¹Ñ•¹ĞÍÑ…åÌ½ÕĞ½˜Í¡¥ÁÁ•ÁÉ½Ñ½½°½€¸ğ)ğI•½Ù•Éä…¹½¹™±¥Ğ…ÉÑ¥™…ÑÌ•á¥ÍÑ•¸ğI5¹½Ü‘½Õµ•¹ÑÌÑ¡”‘…¥±äµÕÍ”Á…Ñ èÉ•½Ù•ÉäÍ¹…ÁÍ¡½ÑÌ°µÕÍÑ}É•…‘€½µÕÍÑ}ÕÁ‘…Ñ•€°Í•µ…¹Ñ¥Œ½¹™±¥ÑÌ°±•‘•È‰½Õ¹‘…É¥•Ì°M,ÙÌ¹½¸µM,ÕÍ”°…¹¥µÁ½ÉĞµÁ…­…”É•Ù¥•Ü¸ğ()Q¡”ØÄ¸ÈÁ…­…”µµ…¹…•µ•¹ĞÁ…Ñ ¥Ì¥¹Ñ•¹Ñ¥½¹…±±ä¹…ÉÉ½Üè()Ñ•áĞ)•áÑ•É¹…°Í½ÕÉ”(´øÁÍ„½¥µÁ½ÉÑÌ½¥¹‰½à¼(´øÁÍ„¥µÁ½ÉĞÁÉ½•ÍÌµ¥¹‰½à(´øÁÍ„½¥µÁ½ÉÑÌ½Í½ÕÉ•Ì¼ñÍ½ÕÉ•}¥ø¼€¬¥µÁ½ÉÑÌ½¥¹‘•à¹©Í½¸(´ø•áÑ•É¹…±}¥µÁ½ÉÑ}É•Ù¥•ÜÍ•ÍÍ¥½¸(´øÉ•Ù¥•Ü…ÉÑ¥™…ÑÌ€¬±•‘•È½Á•¹‘¥¹œ¼(´ø…•ÁÑ•ÁÉ½µ½Ñ¥½¸¥¹Ñ¼ÁÍ„½Í­¥±±Ì°½¹ÑÉ…ÑÌ°É½±•Ì°…Á…‰¥±¥Ñ¥•Ì°½È±•‘•È)€()Q¡”Õ¹‘•É±å¥¹œØÄ¸Ä…‘Ù…¹•…É•…ÌÉ•µ…¥¸è()ğÉ•„ğ¥±•Ìğ]¡…Ğ¥Ğ…‘‘Ìğ)ğ€´´´ğ€´´´ğ€´´´ğ)ğM•ÍÍ¥½¸É•¥ÍÑÉäğÁÍ„½Í•ÍÍ¥½¹Ì¹å…µ±€ğ±•…ÈÍ•ÍÍ¥½¸¥‘•¹Ñ¥Ñä°½İ¹•ÉÍ¡¥À°µÕÍÑ}É•…‘€°µÕÍÑ}ÕÁ‘…Ñ•€°¡…¹‘½™˜°…¹•Í…±…Ñ¥½¸ÉÕ±•Ì¸ğ)ğM•µ…¹Ñ¥Œ½¹™±¥ÑÌğÁÍ„½µ•É•}ÁÉ½Á½Í…±Ì½€ğI•Ù¥•İ…‰±”É•½É‘Ì™½È…ÍÍÕµÁÑ¥½¸‘É¥™ĞÑ¡…Ğµ…ä¹½Ğ…ÁÁ•…È…Ì„¥Ğ½¹™±¥Ğ¸ğ)ğY•É¥™¥…Ñ¥½¸Á±…¹¹¥¹œğÁÍ„½…Ñ•Ì½€°ÁÍ„½Í•¹…É¥½Ì½€ğY•É¥™¥…Ñ¥½¸‰±Õ•ÁÉ¥¹ÑÌ…¹Í•¹…É¥¼Ñ•ÍÑÌÑ¡…Ğ‘•ÍÉ¥‰”İ¡…Ğ•Ù¥‘•¹”Í¡½Õ±•á¥ÍĞ‰•™½É”¥¹Ñ•É…Ñ¥½¸¸ğ)ğI•Ù¥•ÜÉ½ÕÑ¥¹œğÁÍ„½É•Ù¥•İÌ½€ğI¥Í¬µ…İ…É”É•Ù¥•ÜµÉ½ÕÑ¥¹œ…ÉÑ¥™…ÑÌ™½È‘•¥‘¥¹œİ¡¼½Èİ¡…ĞÍ¡½Õ±¥¹ÍÁ•Ğ„¡…¹”¸ğ)ğIÕ¹Ñ¥µ”•Ù¥‘•¹”ğÁÍ„½ÉÕ¹Ñ¥µ”½€°ÁÍ„½•Ù¥‘•¹”½€ğI•½É‘Ì™É½´•áÑ•É¹…°ÉÕ¹Ñ¥µ”½Í•ÕÉ¥ÑäÑ½½±Ìİ¥Ñ¡½ÕĞ±…¥µ¥¹œAM•¹™½É•ÌÉÕ¹Ñ¥µ”Á½±¥ä¥ÑÍ•±˜¸ğ)ğ…Á…‰¥±¥Ñä½¹ÑÉ…ÑÌğÁÍ„½ÉÕ¹Ñ¥µ”½€ğáÁ±¥¥Ğ…Á…‰¥±¥Ñä…¹…ÁÁÉ½Ù…°•áÁ•Ñ…Ñ¥½¹Ì™½ÈÍ•ÍÍ¥½¹Ì½ÈÑ½½±Ì¸ğ)ğM¥¹•Í­¥±±ÌğÁÍ„½Í­¥±±Ì½€ğ=ÁÑ¥½¹…°Í­¥±°ÁÉ½Ù•¹…¹”É•½É‘Ì°‘¥•ÍÑÌ°…¹ÑÉÕÍĞµ•Ñ…‘…Ñ„¸ğ)ğ…Ñ½ÉäµÍÑå±”Á±…¹¹¥¹œğÁÍ„½™…Ñ½Éä½€ğQ…Í¬Ì…¹‘•½µÁ½Í¥Ñ¥½¸Á±…¹Ìì¹½Ğ…¸…ÕÑ½¹½µ½ÕÌ™…Ñ½Éä½È¡½ÍÑ•½É¡•ÍÑÉ…Ñ½È¸ğ)ğ½¹¥Ñ¥Ù”…Õ‘¥Ğ¹½Ñ•ÌğÁÍ„½…Õ‘¥ÑÌ½€ğ!åÁ½Ñ¡•Í¥Ìµ½¹±äÉ•Í•…É ¹½Ñ•Ìì¹½Ğµ½‘•°¥¹Ñ•ÉÁÉ•Ñ…‰¥±¥Ñä•Ù¥‘•¹”‰ä¥ÑÍ•±˜¸ğ()±°…‘Ù…¹•Á…­Ì…É”½ÁÑ¥½¹…°¸Q¡•ä…É”É•Á¼µ±½…°…ÉÑ¥™…ĞÍ¡…Á•Ì°¹½Ğ)Í•ÉÙ¥•Ì°‘…•µ½¹Ì°$°Í…¹‘‰½á¥¹œ°µ•É”…ÕÑ½µ…Ñ¥½¸°½ÈÍ•ÕÉ¥Ñä•¹™½É•µ•¹Ğ¸((ŒŒ1…å•ÉÌ()‘Ù…¹•Á…­Ì…É”½É…¹¥é•…Ì½ÁÑ¥½¹…°±…å•ÉÌÍ¼AMÉ•µ…¥¹Ì„ÁÉ½©•ĞµÍÑ…Ñ”)ÁÉ½Ñ½½°è()ğ1…å•ÈğMÑ…ÑÕÌğAÕÉÁ½Í”ğ)ğ€´´´ğ€´´´ğ€´´´ğ)ğ½É”ÁÉ½Ñ½½°ğI•ÅÕ¥É•°ÍÑ…‰±”ğAÉ½©•Ğ½¹ÑÉ…ÑÌ°Í•ÍÍ¥½¹Ì°ÍÑ…Ñ”°É•Ù¥•İÌ°¥¹Ñ•É…Ñ¥½¸°±•‘•È°…¹µ•É”ÁÉ½Á½Í…±Ì¸ğ)ğ‘Ù…¹•Á…­Ìğ=ÁÑ¥½¹…°°‘É…™ĞğY•É¥™¥…Ñ¥½¸°Í•¹…É¥¼°É•Ù¥•ÜµÉ½ÕÑ¥¹œ°ÉÕ¹Ñ¥µ”•Ù¥‘•¹”°Í¥¹•Í­¥±±Ì°…¹™…Ñ½ÉäµÍÑå±”Á±…¹¹¥¹œ…ÉÑ¥™…ÑÌ¸ğ)ğIÕ¹Ñ¥µ”…‘…ÁÑ•ÉÌğMÁ•Ì½¹±äğ%¹Ñ•É™…•Ì™½È•áÑ•É¹…°Ñ½½±ÌÑ¡…Ğµ…äÁÉ½Ù¥‘”ÉÕ¹Ñ¥µ”½Í•ÕÉ¥Ñä•Ù¥‘•¹”¸ğ)ğI•Í•…É ¹½Ñ•Ìğ!åÁ½Ñ¡•Í¥Ì½¹±äğ½¹¥Ñ¥Ù”…Õ‘¥Ğ¹½Ñ•Ì…¹É•±…Ñ•½‰Í•ÉÙ…Ñ¥½¹Ìì¹•Ù•ÈÍÑÉ½¹•ÈÑ¡…¸Ñ•ÍÑÌ°ÉÕ¹Ñ¥µ”•Ù¥‘•¹”°½¹ÑÉ…ÑÌ°½ÈÉ•Ù¥•Ü‘•¥Í¥½¹Ì¸ğ()‘Ù…¹•Í¡•µ…Ì¥¹Ñ•¹Ñ¥½¹…±±ä‘•ÍÉ¥‰”…ÉÑ¥™…ĞÍ¡…Á•Ì…¹É•™•É•¹•Ì¸Q¡•ä‘¼)¹½Ğµ…­”AM•¹™½É”ÉÕ¹Ñ¥µ”Á½±¥ä‰ä¥ÑÍ•±˜¸((ŒŒá…µÁ±”()•á…µÁ±•Ì½Ñ•…µÑ…Í¬µÁÉ½©•Ñ‰½…É½€½¹Ñ…¥¹Ì„½µÁ±•Ñ”AM…ÉÑ¥™…Ğ±…å•È¸MÑ…ÉĞ)Ñ¡•É”Ñ¼Í•”Ñ¡”™¥±”µ½‘•°İ¥Ñ¡½ÕĞÉ•…‘¥¹œ¥µÁ±•µ•¹Ñ…Ñ¥½¸½‘”¸((ŒŒ	½Õ¹‘…É¥•Ì()AM‘½•Ì¹½ĞÉ•Á±…”AIÌ°İ½É­ÑÉ••Ì°Ñ•ÍÑÌ°½‘”É•Ù¥•Ü°$°Í•ÕÉ¥ÑäÑ½½±¥¹œ°)Í…¹‘‰½á¥¹œ°½È¥¹Ñ•É…Ñ¥½¸…•¹ÑÌ°…¹¥Ğ¥Ì¹½Ğ„AHµ•É”…•¹Ğ¸%Ğ…‘‘Ì„)É•Á¼µ±½…°ÁÉ½©•ĞµÍÑ…Ñ”±…å•ÈÑ¡…Ğµ…­•ÌÉ½ÍÌµÍ•ÍÍ¥½¸…ÍÍÕµÁÑ¥½¹ÌÙ¥Í¥‰±”…¹)É•½Ù•É…‰±”¸()AM!…É¹•ÍÌ½É”ØÄ¸È¥Ì„±½…°ÁÉ½Ñ½½°É•±•…Í”¸‘Ù…¹•Á…­Ì…¹¥µÁ½ÉĞ)Á…­…”µ…¹…•µ•¹Ğ…É”½ÁÑ¥½¹…°ÁÉ½©•ĞµÍÑ…Ñ”™¥±•Ì…¹İ½É­™±½İÌ°¹½Ğµ…¹‘…Ñ½ÉäÍ•ÉÙ¥•Ì¸ÕÉÉ•¹Ğ•Ù¥‘•¹”¥Ì±½…°)…É¡¥Ñ•ÑÕÉ”µÁÉ½Ñ½½°…¹•µ‰•‘‘•µ•á…µÁ±”•Ù¥‘•¹”½¹±ä¸%Ğ¥Ì¹½Ğ„½‘•à°)±…Õ‘”½‘”°É½¬°=Á•¹$°¹Ñ¡É½Á¥Œ°½È¡½ÍÑ•µÁÉ½‘ÕĞ‰•¹¡µ…É¬¸((ŒŒ1¥•¹Í”()Á…¡”1¥•¹Í”€È¸À¸M•”1%9M€¸(
+separate agent threads. Give each one a distinct PGSA identity:
+
+```bash
+codex "Use PGSA session backend. Read AGENTS.md, pgsa-harness/protocol/SKILL.md, pgsa/sessions.yaml, and the backend must_read artifacts. Update backend must_update artifacts before handoff."
+
+codex "Use PGSA session frontend_components. Read AGENTS.md, pgsa-harness/protocol/SKILL.md, pgsa/sessions.yaml, frontend_components must_read artifacts, and backend contract state. Update frontend must_update artifacts before handoff."
+
+codex "Use PGSA session docs_security_integration. Read AGENTS.md, pgsa-harness/protocol/SKILL.md, all summaries, reviews, contracts, merge proposals, integration state, and ledger. Decide readiness and block integration if unresolved semantic drift remains."
+```
+
+Claude Code can be launched the same way with `claude "Use PGSA session ..."`.
+
+For Codex subagent workflows, keep the parent session as the integrator and ask
+subagents to return PGSA-ready summaries instead of writing every artifact
+directly.
+
+## Optional Codex SDK Demo
+
+The optional `sdk/` folder is for users who already want to run PGSA sessions
+through the Codex SDK. It is a userland demo, not the core PGSA path and not an
+OpenAI endorsement or integration claim. The SDK reference is
+<https://developers.openai.com/codex/sdk#python-library>.
+
+PGSA supports two Codex usage modes:
+
+| Mode | How it works | Best for | Tradeoff |
+| --- | --- | --- | --- |
+| Without SDK | Start Codex manually and give it a PGSA session prompt, for example `Use PGSA session backend...`. Codex reads `AGENTS.md`, `protocol/SKILL.md`, and `pgsa/` artifacts directly. | Normal interactive work, one-off sessions, manual control, and maximum transparency. | The user starts and coordinates each session manually. |
+| With SDK | `sdk/codex_pgsa_runner.py` reads `pgsa/sessions.yaml`, builds one PGSA-aware prompt per session, starts Codex SDK threads in the target `--root`, and asks each thread to update `must_update` artifacts. | Programmatic orchestration, repeated long-running checks, CI/internal tools, and launching multiple registered sessions consistently. | Requires the optional Codex SDK and remains userland orchestration; PGSA still does not bypass Codex sandboxing or approvals. |
+
+The SDK advantage is repeatability. It turns the same repo-local PGSA session
+registry into consistent Codex thread starts, while the non-SDK path remains the
+plain file/protocol workflow for everyday interactive use.
+
+```bash
+python3 sdk/codex_pgsa_runner.py --root . --config sdk/codex-runner.config.example.json --dry-run
+```
+
+For a real SDK run, install the official SDK separately:
+
+```bash
+pip install openai-codex
+python3 sdk/codex_pgsa_runner.py --start-only
+python3 sdk/codex_pgsa_runner.py --root . --config sdk/codex-runner.config.example.json
+```
+
+The runner reads `pgsa/sessions.yaml`, builds one PGSA-aware prompt per
+registered session, starts each Codex SDK thread in the target project root
+passed by `--root`, and asks each thread to update its `must_update` artifacts
+before handoff. It stays userland orchestration: PGSA remains the file protocol,
+and Codex sandboxing/approvals remain Codex's responsibility. For temporary
+verification runs, set `"ephemeral": true` in the SDK config; leave it `false`
+when SDK-run sessions should remain resumable.
+
+## Optional Python Tools
+
+The optional CLI can initialize and validate PGSA artifacts for users:
+
+```bash
+python3 -m pip install -e tools/python
+pgsa --root examples/teamtask-projectboard validate
+pgsa --root examples/teamtask-projectboard drift-report
+pgsa --root /tmp/pgsa-demo init --force
+```
+
+Without installing:
+
+```bash
+PYTHONPATH=tools/python python3 -m pgsa_cli.main --root examples/teamtask-projectboard status
+```
+
+For convenience, `--root` is accepted before or after the subcommand:
+
+```bash
+pgsa --root examples/teamtask-projectboard validate
+pgsa validate --root examples/teamtask-projectboard
+```
+
+The CLI is helper automation. It does not decide semantic truth, resolve merge
+conflicts, or replace agent judgment.
+
+## What v1.2 Adds
+
+Version 1.2 builds on the v1.1 protocol/advanced-pack baseline by formalizing
+two practical usage layers: optional Codex SDK orchestration and review-first
+external skill/harness package management.
+
+Compared with the v1.1 baseline:
+
+| v1.1 baseline | v1.2 improvement |
+| --- | --- |
+| Core protocol plus optional advanced packs. | External skill/harness package management through `imports/inbox/`, `imports/sources/`, `imports/index.json`, and the dedicated `external_import_review` session. |
+| Agents could read PGSA files manually. | Concrete non-SDK prompts plus an optional Codex SDK runner that starts registered PGSA sessions repeatably from `pgsa/sessions.yaml`. |
+| Imported material could be referenced by convention. | Imported packages are copied, indexed, reviewed, summarized, and recorded in pending ledger events before promotion. |
+| Skill provenance existed as an advanced artifact shape. | Accepted import metadata can be promoted into `pgsa/skills/`; raw unreviewed external content stays out of shipped `protocol/`. |
+| Recovery and conflict artifacts existed. | README now documents the daily-use path: recovery snapshots, `must_read`/`must_update`, semantic conflicts, ledger boundaries, SDK vs non-SDK use, and import-package review. |
+
+The v1.2 package-management path is intentionally narrow:
+
+```text
+external source
+-> pgsa/imports/inbox/
+-> pgsa import process-inbox
+-> pgsa/imports/sources/<source_id>/ + imports/index.json
+-> external_import_review session
+-> review artifacts + ledger/pending/
+-> accepted promotion into pgsa/skills, contracts, roles, capabilities, or ledger
+```
+
+The underlying v1.1 advanced areas remain:
+
+| Area | Files | What it adds |
+| --- | --- | --- |
+| Session registry | `pgsa/sessions.yaml` | Clear session identity, ownership, `must_read`, `must_update`, handoff, and escalation rules. |
+| Semantic conflicts | `pgsa/merge_proposals/` | Reviewable records for assumption drift that may not appear as a Git conflict. |
+| Verification planning | `pgsa/gates/`, `pgsa/scenarios/` | Verification blueprints and scenario tests that describe what evidence should exist before integration. |
+| Review routing | `pgsa/reviews/` | Risk-aware review-routing artifacts for deciding who or what should inspect a change. |
+| Runtime evidence | `pgsa/runtime/`, `pgsa/evidence/` | Records from external runtime/security tools without claiming PGSA enforces runtime policy itself. |
+| Capability contracts | `pgsa/runtime/` | Explicit capability and approval expectations for sessions or tools. |
+| Signed skills | `pgsa/skills/` | Optional skill provenance records, digests, and trust metadata. |
+| Factory-style planning | `pgsa/factory/` | Task DAGs and decomposition plans; not an autonomous factory or hosted orchestrator. |
+| Cognitive audit notes | `pgsa/audits/` | Hypothesis-only research notes; not model interpretability evidence by itself. |
+
+All advanced packs are optional. They are repo-local artifact shapes, not
+services, daemons, CI, sandboxing, merge automation, or security enforcement.
+
+## Layers
+
+Advanced packs are organized as optional layers so PGSA remains a project-state
+protocol:
+
+| Layer | Status | Purpose |
+| --- | --- | --- |
+| Core protocol | Required, stable | Project contracts, sessions, state, reviews, integration, ledger, and merge proposals. |
+| Advanced packs | Optional, draft | Verification, scenario, review-routing, runtime evidence, signed skills, and factory-style planning artifacts. |
+| Runtime adapters | Specs only | Interfaces for external tools that may provide runtime/security evidence. |
+| Research notes | Hypothesis only | Cognitive audit notes and related observations; never stronger than tests, runtime evidence, contracts, or review decisions. |
+
+Advanced schemas intentionally describe artifact shapes and references. They do
+not make PGSA enforce runtime policy by itself.
+
+## Example
+
+`examples/teamtask-projectboard/` contains a complete PGSA artifact layer. Start
+there to see the file model without reading implementation code.
+
+## Boundaries
+
+PGSA does not replace PRs, worktrees, tests, code review, CI, security tooling,
+sandboxing, or integration agents. It adds a repo-local project-state layer that
+makes cross-session assumptions visible and recoverable.
+
+PGSA Harness Core v1.2 is a local protocol release. Advanced packs and import
+package management are optional project-state files and workflows, not mandatory services. Current evidence is local
+architecture-protocol and embedded-example evidence only. It is not a Codex,
+Claude Code, Grok, OpenAI, Anthropic, or hosted-product benchmark.
+
+## License
+
+Apache License 2.0. See `LICENSE`.
