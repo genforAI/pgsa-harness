@@ -32,20 +32,41 @@ The communication medium is the repository, not private chat history.
 Use PGSA when work is long-running, split across agent sessions, or likely to
 change shared assumptions. For small one-off edits, it may be unnecessary.
 
+## Where It Lives In Your Project
+
+PGSA is meant to be embedded inside an existing product or research repository.
+Your main project code stays where it already is: `src/`, `app/`, `packages/`,
+`docs/`, `tests/`, or any structure your project already uses. PGSA adds a
+repo-local coordination layer beside that code:
+
+```text
+your-project/
+  pgsa-harness/        # copied PGSA protocol + optional helper tools
+  pgsa/                # this project's durable agent coordination state
+  src/                 # your actual product code, unchanged
+  tests/               # your existing tests
+  docs/                # your existing docs
+```
+
+In this README, "your project repo" means the repository where you are doing the
+real work. `pgsa-harness/` is the embedded protocol/tooling package. `pgsa/` is
+the project-specific state that Codex, Claude Code, or other agents read and
+update across sessions.
+
 ## File Model
 
 The protocol source lives under `protocol/`:
 
 - `protocol/SKILL.md`: the agent workflow.
 - `protocol/artifact-map.md`: what each PGSA artifact means.
-- `protocol/templates/`: starter artifacts copied into a target repo's `pgsa/` layer.
+- `protocol/templates/`: starter artifacts copied into your project repo's `pgsa/` layer.
 - `protocol/schemas/`: JSON schemas for structured artifacts.
 - `protocol/rules/`: short boundaries agents should follow.
 - `protocol/roles/`: optional role examples and role schemas.
 - `protocol/capabilities/`: optional advanced capability packs.
 - `protocol/adapters/`: optional adapter specifications for runtime/security/interpretability tools.
 
-A target project using PGSA has a `pgsa/` folder:
+Inside your project repo, PGSA creates or maintains a `pgsa/` folder:
 
 ```text
 pgsa/
@@ -63,7 +84,7 @@ pgsa/
     sources/
   reports/
 
-  # optional advanced mode
+  # optional advanced artifacts, created by init --advanced
   gates/
   runtime/
   skills/
@@ -91,6 +112,31 @@ Core artifact roles:
 | `imports/inbox/` | Drop folder for external repos or skill packs before import processing. |
 | `imports/sources/<source_id>/` | Optional copied external source material for repo-local review. |
 
+Advanced mode is enabled explicitly:
+
+```bash
+PYTHONPATH=pgsa-harness/tools/python python3 -m pgsa_cli.main --root . init --advanced --force
+PYTHONPATH=pgsa-harness/tools/python python3 -m pgsa_cli.main --root . validate --strict-advanced
+```
+
+Those optional folders are not the import system. They are built-in artifact
+categories for richer project state:
+
+| Advanced folder | Purpose |
+| --- | --- |
+| `gates/` | Verification blueprints and readiness gates. |
+| `runtime/` | Runtime profiles and capability contracts. |
+| `skills/` | Accepted skill provenance or signed skill manifests. |
+| `evidence/` | Runtime or verification evidence records from external tools. |
+| `factory/` | Factory-style task DAGs and planning artifacts. |
+| `scenarios/` | Scenario tests and expected evidence. |
+| `audits/` | Hypothesis-only cognitive audit notes. |
+
+The import workflow is separate. External repositories, skill packs, prompt
+packs, or protocol folders first go through `pgsa/imports/`. Only after review
+should selected metadata or accepted provenance be promoted into advanced folders
+such as `pgsa/skills/`.
+
 ## Built-In Packs Vs Project Import Packages
 
 Keep bundled PGSA material separate from user-added external material:
@@ -98,10 +144,10 @@ Keep bundled PGSA material separate from user-added external material:
 | Location | Owner | Purpose |
 | --- | --- | --- |
 | `protocol/capabilities/`, `protocol/adapters/`, `protocol/templates/`, `protocol/schemas/` | PGSA harness | Shipped reference artifact shapes and optional advanced packs. |
-| target project `pgsa/imports/inbox/` | user / importing agent | Temporary drop folder for external repos, skills, prompt packs, or docs. |
-| target project `pgsa/imports/sources/<source_id>/` | project | Reviewable local copy of imported external material. |
-| target project `pgsa/imports/index.json` | project | Import registry: source metadata, selected files, detected skills, review state, and triage session. |
-| target project `pgsa/skills/` | project, advanced mode | Accepted skill provenance or signed skill manifests, not raw unreviewed imports. |
+| your project repo `pgsa/imports/inbox/` | user / importing agent | Temporary drop folder for external repos, skills, prompt packs, or docs. |
+| your project repo `pgsa/imports/sources/<source_id>/` | project | Reviewable local copy of imported external material. |
+| your project repo `pgsa/imports/index.json` | project | Import registry: source metadata, selected files, detected skills, review state, and triage session. |
+| your project repo `pgsa/skills/` | project, advanced mode | Accepted skill provenance or signed skill manifests, not raw unreviewed imports. |
 
 Raw external skills should not be mixed into the shipped `protocol/` folders.
 They should
@@ -144,11 +190,14 @@ flowchart LR
   F --> G["next session resumes<br/>from repo-local state"]
 ```
 
-## Next-Session Recovery
+## Session Handoff Snapshot
 
-Repo-local state only helps if the next run can recover without replaying chat.
+This is the practical "next-session recovery" mechanism. It does not mean PGSA
+rolls back code or restores a filesystem snapshot. It means the next agent run
+can recover the working context without replaying private chat history.
+
 For that reason, each `pgsa/state/<session>.summary.md` should keep a short
-recovery snapshot:
+handoff snapshot:
 
 - current scope;
 - last known good state;
@@ -157,7 +206,7 @@ recovery snapshot:
 - open risks, blockers, or unresolved assumptions;
 - next recommended action.
 
-This snapshot is intentionally smaller than a transcript. It gives the next
+This handoff snapshot is intentionally smaller than a transcript. It gives the next
 Codex, Claude Code, or human reviewer enough context to restart work, decide
 what must be re-run, and avoid repeating failed commands.
 
@@ -333,18 +382,18 @@ next agent does not depend on private chat history.
 
 ## Quick Start
 
-Copy `pgsa-harness/` into any target project as a normal folder:
+Copy `pgsa-harness/` into your existing project repo as a normal folder:
 
 ```text
-target-project/
+your-project/
   pgsa-harness/
   pgsa/
   src/
   tests/
 ```
 
-The agent-facing protocol is `pgsa-harness/protocol/SKILL.md`. The target
-project's durable coordination state is `pgsa/`.
+The agent-facing protocol is `pgsa-harness/protocol/SKILL.md`. Your project's
+durable coordination state is `pgsa/`.
 
 Optional initialization and validation can run from the embedded folder without
 global installation:
@@ -366,7 +415,7 @@ Python is intentionally outside the main path. The protocol is the files.
 
 ## Codex And Claude Code Use
 
-For Codex, put PGSA guidance in the target repository's `AGENTS.md`. For Claude
+For Codex, put PGSA guidance in your project repo's `AGENTS.md`. For Claude
 Code, put the equivalent guidance in `CLAUDE.md`; this repository includes both
 files as examples.
 
@@ -406,6 +455,18 @@ For Codex subagent workflows, keep the parent session as the integrator and ask
 subagents to return PGSA-ready summaries instead of writing every artifact
 directly.
 
+## Native Codex Vs Codex SDK
+
+The default path is native Codex or Claude Code use inside your project folder.
+Open the agent in `your-project/`, give it a PGSA session identity, and tell it
+to read `AGENTS.md` or `CLAUDE.md`, `pgsa-harness/protocol/SKILL.md`,
+`pgsa/sessions.yaml`, and that session's `must_read` artifacts. The agent then
+updates its `must_update` artifacts before handoff.
+
+Use the SDK only when you want to programmatically start the same registered
+sessions in a repeatable way. The SDK does not create better memory than the
+file protocol. It is a launcher/orchestrator over the same `pgsa/` files.
+
 ## Optional Codex SDK Demo
 
 The optional `sdk/` folder is for users who already want to run PGSA sessions
@@ -417,8 +478,8 @@ PGSA supports two Codex usage modes:
 
 | Mode | How it works | Best for | Tradeoff |
 | --- | --- | --- | --- |
-| Without SDK | Start Codex manually and give it a PGSA session prompt, for example `Use PGSA session backend...`. Codex reads `AGENTS.md`, `protocol/SKILL.md`, and `pgsa/` artifacts directly. | Normal interactive work, one-off sessions, manual control, and maximum transparency. | The user starts and coordinates each session manually. |
-| With SDK | `sdk/codex_pgsa_runner.py` reads `pgsa/sessions.yaml`, builds one PGSA-aware prompt per session, starts Codex SDK threads in the target `--root`, and asks each thread to update `must_update` artifacts. | Programmatic orchestration, repeated long-running checks, CI/internal tools, and launching multiple registered sessions consistently. | Requires the optional Codex SDK and remains userland orchestration; PGSA still does not bypass Codex sandboxing or approvals. |
+| Native Codex / no SDK | Start Codex manually in your project repo and give it a PGSA session prompt, for example `Use PGSA session backend...`. Codex reads `AGENTS.md`, `protocol/SKILL.md`, and `pgsa/` artifacts directly. | Normal interactive work, one-off sessions, manual control, and maximum transparency. | The user starts and coordinates each session manually. |
+| Codex SDK | `sdk/codex_pgsa_runner.py` reads `pgsa/sessions.yaml`, builds one PGSA-aware prompt per session, starts Codex SDK threads in the project repo passed by `--root`, and asks each thread to update `must_update` artifacts. | Programmatic orchestration, repeated long-running checks, CI/internal tools, and launching multiple registered sessions consistently. | Requires the optional Codex SDK and remains userland orchestration; PGSA still does not bypass Codex sandboxing or approvals. |
 
 The SDK advantage is repeatability. It turns the same repo-local PGSA session
 registry into consistent Codex thread starts, while the non-SDK path remains the
@@ -428,17 +489,26 @@ plain file/protocol workflow for everyday interactive use.
 python3 sdk/codex_pgsa_runner.py --root . --config sdk/codex-runner.config.example.json --dry-run
 ```
 
-For a real SDK run, install the official SDK separately:
+SDK flow:
+
+1. Initialize PGSA in your project repo.
+2. Check `pgsa/sessions.yaml` and make sure each session has a role,
+   `must_read`, and `must_update`.
+3. Run the SDK dry-run to inspect the prompts it would start.
+4. Install the official SDK separately.
+5. Start threads with `--start-only`, or run the configured session prompts.
 
 ```bash
+PYTHONPATH=pgsa-harness/tools/python python3 -m pgsa_cli.main --root . init --force
+python3 sdk/codex_pgsa_runner.py --root . --config sdk/codex-runner.config.example.json --dry-run
 pip install openai-codex
 python3 sdk/codex_pgsa_runner.py --start-only
 python3 sdk/codex_pgsa_runner.py --root . --config sdk/codex-runner.config.example.json
 ```
 
 The runner reads `pgsa/sessions.yaml`, builds one PGSA-aware prompt per
-registered session, starts each Codex SDK thread in the target project root
-passed by `--root`, and asks each thread to update its `must_update` artifacts
+registered session, starts each Codex SDK thread in the project repo root passed
+by `--root`, and asks each thread to update its `must_update` artifacts
 before handoff. It stays userland orchestration: PGSA remains the file protocol,
 and Codex sandboxing/approvals remain Codex's responsibility. For temporary
 verification runs, set `"ephemeral": true` in the SDK config; leave it `false`
