@@ -1,0 +1,42 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "PGSA Import Index",
+  "type": "object",
+  "required": ["version", "imports"],
+  "properties": {
+    "version": {"type": "string"},
+    "imports": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "required": ["kind", "status", "file_count", "total_bytes"],
+        "properties": {
+          "kind": {
+            "type": "string",
+            "enum": ["external_harness", "skill_pack", "protocol", "docs", "other"]
+          },
+          "status": {
+            "type": "string",
+            "enum": ["indexed", "triaging", "accepted", "rejected", "deprecated"]
+          },
+          "origin_path": {"type": "string"},
+          "local_path": {
+            "anyOf": [
+              {"type": "string", "pattern": "^[^/].*"},
+              {"type": "null"}
+            ]
+          },
+          "registered_at": {"type": "string"},
+          "recommended_session": {"type": "string"},
+          "file_count": {"type": "integer"},
+          "total_bytes": {"type": "integer"},
+          "selected_files": {"type": "array", "items": {"type": "string"}},
+          "notes": {"type": "string"}
+        },
+        "additionalProperties": true
+      }
+    },
+    "notes": {"type": "array", "items": {"type": "string"}}
+  },
+  "additionalProperties": false
+}
