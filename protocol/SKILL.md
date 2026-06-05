@@ -19,25 +19,34 @@ the repository.
    `produces`, `consumes`, `must_read`, `must_update`, and `handoff_to`.
 3. Identify the active session.
 4. Read `pgsa/harness/<session>.md`.
-5. Read relevant contracts, summaries, merge proposals, reviews, integration
+5. If launched from `pgsa/session_agents/<session>/` or a sibling session
+   folder, read `PGSA_SESSION.json` and `AGENTS.md` there; treat them as launch
+   pointers back to the same registered session, not as a second registry.
+6. Read relevant contracts, summaries, merge proposals, reviews, integration
    reports, and ledger events.
-6. Check whether this project defines custom roles under `protocol/roles/` or
+7. Check whether this project defines custom roles under `protocol/roles/` or
    `pgsa/sessions.yaml`.
-7. Perform the task.
-8. Update the session summary.
-9. Update affected contracts and their `review_state`.
-10. Update review/integration artifacts when readiness changes.
-11. Create or update a merge proposal if another session may now be
+8. Perform the task.
+9. Update the session summary.
+10. Update affected contracts and their `review_state`.
+11. Update review/integration artifacts when readiness changes.
+12. Create or update a merge proposal if another session may now be
    inconsistent.
-12. Append a coherence ledger event. If multiple sessions are running in
+13. Append a coherence ledger event. If multiple sessions are running in
     parallel, write a pending event under `pgsa/ledger/pending/*.json` and let
     the reviewer/integration session append it to `coherence_ledger.jsonl`.
-13. If optional advanced artifacts exist, read relevant `gates/`, `runtime/`, `skills/`, `evidence/`, `factory/`, `scenarios/`, and `audits/` files before making review or permission claims.
-14. Run validation and drift reporting before handoff when available.
+14. If optional advanced artifacts exist, read relevant `gates/`, `runtime/`,
+    `skills/`, `evidence/`, `factory/`, `scenarios/`, and `audits/` files before
+    making review or permission claims. For imported skills, use only accepted
+    entries in `pgsa/skills/signed_skill_manifest.yaml` whose `applies_to`
+    contains the active session or `*`.
+15. Run validation and drift reporting before handoff when available.
 
 ## Required Artifacts
 
 - `pgsa/harness/<session>.md`
+- `pgsa/session_agents/<session>/AGENTS.md` (optional launch wrapper)
+- `pgsa/session_agents/<session>/PGSA_SESSION.json` (optional launch pointers)
 - `pgsa/contracts/*.json`
 - `pgsa/state/*.summary.md`
 - `pgsa/merge_proposals/*.md`
