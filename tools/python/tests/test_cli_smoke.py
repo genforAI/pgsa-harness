@@ -136,6 +136,171 @@ class PGSACliSmokeTest(unittest.TestCase):
             self.assertEqual(validate.returncode, 0, validate.stderr)
             self.assertEqual(json.loads(validate.stdout), {"issues": []})
 
+    def test_session_register_creates_scoped_artifacts(self) -> None:
+        with tempfile.TemporaryDirectory() as temp_dir:
+            init = self.run_pgsa("--root", temp_dir, "init", "--force")
+            self.assertEqual(init.returncode, 0, init.stderr)
+
+            register = self.run_pgsa(
+                "--root",
+                temp_dir,
+                "session",
+                "register",
+                "research_import",
+                "--role",
+                "external-skill-review",
+                "--scope",
+                "triage imported skills",
+                "--must-read",
+                "imports/index.json",
+                "--must-update",
+                "state/research_import.summary.md,ledger/pending/",
+                "--handoff-to",
+                "docs_security_integration",
+                "--self-registered",
+            )
+            self.assertEqual(register.returncode, 0, register.stderr)
+            pgsa = Path(temp_dir) / "pgsa"
+            sessions = json.loads((pgsa / "sessions.yaml").read_text(encoding="utf-8"))
+            self.assertEqual(sessions["sessions"]["research_import"]["role"], "external-skill-review")
+            self.assertTrue((pgsa / "harness" / "research_import.md").exists())
+            self.assertTrue((pgsa / "state" / "research_import.summary.md").exists())
+
+            context = self.run_pgsa("--root", temp_dir, "export-context", "--session", "research_import")
+            self.assertEqual(context.returncode, 0, context.stderr)
+            self.assertIn("external-skill-review", context.stdout)
+
+            validate = self.run_pgsa("--root", temp_dir, "validate")
+            self.assertEqual(validate.returncode, 0, validate.stdout)
+
+    def test_import_add_indexes_external_source(self) -> None:
+        with tempfile.TemporaryDirectory() as temp_dir, tempfile.TemporaryDirectory() as source_dir:
+            init = self.run_pgsa("--root", temp_dir, "init", "--force")
+            self.assertEqual(init.returncode, 0, init.stderr)
+
+            register = self.run_pgsa(
+                "--root",
+                temp_dir,
+                "session",
+                "register",
+                "research_import",
+                "--role",
+                "external-skill-review",
+                "--scope",
+                "triage imported skills",
+                "--force",
+            )
+            self.assertEqual(register.returncode, 0, register.stderr)
+
+            source = Path(source_dir)
+            (source / "skills").mkdir()
+            (source / "skills" / "reader.md").write_text("# Reader skill\n", encoding="utf-8")
+            (source / "README.md").write_text("external pack\n", encoding="utf-8")
+
+            added = self.run_pgsa(
+                "--root",
+                temp_dir,
+                "import",
+                "add",
+                "external_pack",
+                "--path",
+                source_dir,
+                "--kind",
+                "skill_pack",
+                "--session",
+                "research_import",
+            )
+            self.assertEqual(added.returncode, 0, added.stderr)
+            payload = json.loads(added.stdout)
+            self.assertEqual(payload["file_count"], 2)
+            self.assertEqual(payload["local_path"], "imports/sources/external_pack")
+
+            stats = self.run_pgsa("--root", temp_dir, "import", "stats")
+            self.assertEqual(stats.returncode, 0, stats.stderr)
+            stats_payload = json.loads(stats.stdout)
+            self.assertEqual(stats_payload["source_count"], 1)
+            self.assertEqual(stats_payload["by_kind"], {"skill_pack": 1})
+
+            validate = self.run_pgsa("--root", temp_dir, "validate")
+            self.assertEqual(validate.returncode, 0, validate.stdout)
+
+    def test_default_import_session_processes_and_cleans_inbox(self) -> None:
+        with tempfile.TemporaryDirectory() as temp_dir:
+            init = self.run_pgsa("--root", temp_dir, "init", "--force")
+            self.assertEqual(init.returncode, 0, init.stderr)
+
+            pgsa = Path(temp_dir) / "pgsa"
+            sessions = json.loads((pgsa / "sessions.yaml").read_text(encoding="utf-8"))
+            self.assertIn("external_import_review", sessions["sessions"])
+
+            inbox_source = pgsa / "imports" / "inbox" / "external-skill-pack"
+            (inbox_source / "skills").mkdir(parents=True)
+            (inbox_source / "skills" / "importer.md").write_text("# Importer skill\n", encoding="utf-8")
+            (inbox_source / "README.md").write_text("external import source\n", encoding="utf-8")
+
+            processed = self.run_pgsa("--root", temp_dir, "import", "process-inbox")
+            self.assertEqual(processed.returncode, 0, processed.stderr)
+            payload = json.loads(processed.stdout)
+            self.assertEqual(payload["processed_count"], 1)
+            self.assertTrue(payload["cleaned"])
+            self.assertFalse(inbox_source.exists())
+
+            source_id = payload["processed"][0]["source_id"]
+            self.assertTrue((pgsa / "imports" / "sources" / source_id / "skills" / "importer.md").exists())
+            index = json.loads((pgsa / "imports" / "index.json").read_text(encoding="utf-8"))
+            self.assertEqual(index["imports"][source_id]["recommended_session"], "external_import_review")
+
+            validate = self.run_pgsa("--root", temp_dir, "validate")
+            self.assertEqual(validate.returncode, 0, validate.stdout)
+
+    def test_import_review_records_skill_triage_artifacts(self) -> None:
+        with tempfile.TemporaryDirectory() as temp_dir:
+            init = self.run_pgsa("--root", temp_dir, "init", "--force")
+            self.assertEqual(init.returncode, 0, init.stderr)
+
+            pgsa = Path(temp_dir) / "pgsa"
+            inbox_source = pgsa / "imports" / "inbox" / "external-codex-skill"
+            inbox_source.mkdir(parents=True)
+            (inbox_source / "SKILL.md").write_text(
+                """---
+name: external-review-skill
+description: Reviews imported external skill packs before project activation.
+---
+
+# External Review Skill
+""",
+                encoding="utf-8",
+            )
+            (inbox_source / "README.md").write_text("external skill pack\n", encoding="utf-8")
+
+            processed = self.run_pgsa("--root", temp_dir, "import", "process-inbox")
+            self.assertEqual(processed.returncode, 0, processed.stderr)
+            source_id = json.loads(processed.stdout)["processed"][0]["source_id"]
+
+            reviewed = self.run_pgsa("--root", temp_dir, "import", "review", source_id)
+            self.assertEqual(reviewed.returncode, 0, reviewed.stderr)
+            review_payload = json.loads(reviewed.stdout)
+            self.assertEqual(review_payload["status"], "reviewed")
+            self.assertEqual(review_payload["detected_skill_count"], 1)
+
+            index = json.loads((pgsa / "imports" / "index.json").read_text(encoding="utf-8"))
+            record = index["imports"][source_id]
+            self.assertEqual(record["status"], "reviewed")
+            self.assertEqual(record["detected_skills"][0]["name"], "external-review-skill")
+            self.assertEqual(record["detected_skills"][0]["path"], "SKILL.md")
+
+            summary = (pgsa / "state" / "external_import_review.summary.md").read_text(encoding="utf-8")
+            harness = (pgsa / "harness" / "external_import_review.md").read_text(encoding="utf-8")
+            self.assertIn("Import Review", summary)
+            self.assertIn("external-review-skill", harness)
+            pending = pgsa / "ledger" / "pending" / f"import_review_{source_id}.json"
+            self.assertTrue(pending.exists())
+            pending_event = json.loads(pending.read_text(encoding="utf-8"))
+            self.assertEqual(pending_event["event_type"], "IMPORT_REVIEWED")
+
+            validate = self.run_pgsa("--root", temp_dir, "validate")
+            self.assertEqual(validate.returncode, 0, validate.stdout)
+
     def test_advanced_init_validate_and_artifacts(self) -> None:
         with tempfile.TemporaryDirectory() as temp_dir:
             init = self.run_pgsa("--root", temp_dir, "init", "--advanced", "--force")
