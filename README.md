@@ -281,7 +281,10 @@ pgsa/session_agents/backend/
 For a sibling long-running session folder or separate worktree:
 
 ```bash
-PYTHONPATH=pgsa-harness/tools/python python3 -m pgsa_cli.main --root target-project   session-agent create backend   --out ../agent-sessions/backend   --harness-root ../pgsa-harness
+PYTHONPATH=pgsa-harness/tools/python python3 -m pgsa_cli.main --root target-project \
+  session-agent create backend \
+  --out ../agent-sessions/backend \
+  --harness-root ../pgsa-harness
 ```
 
 The generated `PGSA_SESSION.json` stores relative pointers to `pgsa_root`,

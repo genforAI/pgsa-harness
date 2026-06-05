@@ -168,7 +168,10 @@ pgsa/session_agents/backend/
 如果每个长时间运行的 session 有自己的 sibling 文件夹或 worktree：
 
 ```bash
-PYTHONPATH=pgsa-harness/tools/python python3 -m pgsa_cli.main --root target-project   session-agent create backend   --out ../agent-sessions/backend   --harness-root ../pgsa-harness
+PYTHONPATH=pgsa-harness/tools/python python3 -m pgsa_cli.main --root target-project \
+  session-agent create backend \
+  --out ../agent-sessions/backend \
+  --harness-root ../pgsa-harness
 ```
 
 生成的 `PGSA_SESSION.json` 会保存指向 `pgsa_root`、`harness_root`、
