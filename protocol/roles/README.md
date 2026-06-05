@@ -19,3 +19,5 @@ See:
 
 - `protocol/templates/role.template.yaml`
 - `protocol/templates/session_binding.template.yaml`
+- `protocol/roles/examples/external-import-review.role.yaml`
+- `protocol/imports/external_import_review_agent.md`
