@@ -110,6 +110,36 @@ SESSIONS_TEMPLATE: dict[str, Any] = {
                 ],
             },
         },
+        "external_import_review": {
+            "role": "external-import-review",
+            "status": "active",
+            "owner_scope": ["external harness import", "skill pack triage", "protocol compatibility review"],
+            "produces": ["state/external_import_review.summary.md", "imports/index.json", "ledger/pending/"],
+            "consumes": ["imports/index.json", "imports/inbox/", "imports/sources/", "sessions.yaml"],
+            "must_read": [
+                "project.yaml",
+                "sessions.yaml",
+                "imports/index.json",
+                "imports/inbox/",
+                "imports/sources/",
+                "ledger/coherence_ledger.jsonl",
+            ],
+            "must_update": [
+                "harness/external_import_review.md",
+                "state/external_import_review.summary.md",
+                "imports/index.json",
+                "ledger/pending/",
+            ],
+            "handoff_to": ["docs_security_integration"],
+            "escalation_policy": {
+                "create_merge_proposal_when": [
+                    "imported content conflicts with existing project contracts",
+                    "imported skill behavior changes session scope",
+                    "external protocol assumptions are incompatible with PGSA state",
+                ],
+                "block_integration_when": ["imported content has not been triaged"],
+            },
+        },
     }
 }
 
@@ -265,6 +295,15 @@ INTEGRATION_REPORT_TEMPLATE: dict[str, Any] = {
     "contract_violations": 0,
     "integration_failures": 0,
     "notes": "Initial scaffold.",
+}
+
+IMPORT_INDEX_TEMPLATE: dict[str, Any] = {
+    "version": "1.0",
+    "imports": {},
+    "notes": [
+        "External harnesses, skills, or protocol folders are indexed here before an agent session integrates them.",
+        "An import record is evidence for review, not proof that the imported content is trusted or active.",
+    ],
 }
 
 
