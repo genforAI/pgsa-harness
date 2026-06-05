@@ -1,6 +1,7 @@
 {
   "model": "gpt-5.4",
   "sandbox": "workspace_write",
+  "ephemeral": false,
   "sessions": [
     "backend",
     "frontend_components",
