@@ -3,6 +3,9 @@
 - `project.yaml`: project identity, goals, modules, and acceptance criteria.
 - `sessions.yaml`: durable session ownership, produced/consumed artifacts, required reads/updates, and handoff targets.
 - `harness/<session>.md`: per-session operating instructions.
+- `session_agents/<session>/`: optional launch folder for a fresh agent session,
+  containing `AGENTS.md`, `SKILL.md`, and `PGSA_SESSION.json` pointers back to
+  the registered PGSA session.
 - `contracts/*.json`: shared producer/consumer assumptions, review state, acceptance tests, and breaking-change state.
 - `state/*.summary.md`: compressed session memory plus next-session recovery
   snapshot: scope, failed commands, touched files, open risks, and next action.
