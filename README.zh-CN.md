@@ -82,6 +82,23 @@ pgsa/
 | `imports/inbox/` | 外部仓库或 skill pack 的投放目录，处理后默认清理。 |
 | `imports/sources/<source_id>/` | 可选的外部来源本地副本，便于在仓库内审查。 |
 
+## 内置 Packs 与项目导入内容
+
+内置 PGSA 内容和用户自己添加的外部内容应分开管理：
+
+| 位置 | 所有者 | 用途 |
+| --- | --- | --- |
+| `protocol/capabilities/`, `protocol/adapters/`, `protocol/templates/`, `protocol/schemas/` | PGSA harness | 随仓库发布的参考 artifact shapes 和可选 advanced packs。 |
+| 目标项目 `pgsa/imports/inbox/` | 用户 / 导入 agent | 外部 repo、skills、prompt packs 或 docs 的临时投放目录。 |
+| 目标项目 `pgsa/imports/sources/<source_id>/` | 项目 | 外部来源的可审查本地副本。 |
+| 目标项目 `pgsa/imports/index.json` | 项目 | 导入注册表：source metadata、selected files、detected skills、review state 和 triage session。 |
+| 目标项目 `pgsa/skills/` | 项目，advanced mode | 已接受的 skill provenance 或 signed skill manifests，不是未审查 raw imports。 |
+
+不要把 raw external skills 直接混进随仓库发布的 `protocol/` 文件夹。它们应先进入
+`pgsa/imports/`，由 `external_import_review` 或自定义 import-review session
+审查，再提升到项目自己的 `pgsa/skills/`、roles、contracts、capabilities、
+merge proposals 或 ledger events。
+
 ## 核心流程
 
 每个 agent session 遵循同一套流程：
@@ -319,6 +336,16 @@ Claude Code 可以用同样方式启动：`claude "Use PGSA session ..."`。
 可选的 `sdk/` 文件夹面向已经想使用 Codex SDK 的用户，展示如何用 SDK 启动多个已注册 PGSA session。它是 userland demo，不是 PGSA 核心路径，也不代表 OpenAI/Codex 官方集成或背书。SDK 参考文档是：
 <https://developers.openai.com/codex/sdk#python-library>。
 
+PGSA 支持两种 Codex 使用模式：
+
+| 模式 | 工作方式 | 适合场景 | 取舍 |
+| --- | --- | --- | --- |
+| 不使用 SDK | 用户手动启动 Codex，并给出 PGSA session prompt，例如 `Use PGSA session backend...`。Codex 直接读取 `AGENTS.md`、`protocol/SKILL.md` 和 `pgsa/` artifacts。 | 日常交互式工作、一次性 session、人工控制和最高透明度。 | 用户需要自己启动和协调每个 session。 |
+| 使用 SDK | `sdk/codex_pgsa_runner.py` 读取 `pgsa/sessions.yaml`，为每个 session 构造 PGSA-aware prompt，在目标 `--root` 中启动 Codex SDK threads，并要求每个 thread 更新 `must_update` artifacts。 | 程序化编排、重复的长时间检查、CI/internal tools、稳定启动多个已注册 sessions。 | 需要可选 Codex SDK；仍然是 userland orchestration，不绕过 Codex sandboxing/approvals。 |
+
+SDK 的优势是可重复编排：它把同一份 repo-local PGSA session registry
+变成一致的 Codex thread 启动方式；非 SDK 模式则保留日常交互使用时最直接的文件/协议路径。
+
 ```bash
 python3 sdk/codex_pgsa_runner.py --root . --config sdk/codex-runner.config.example.json --dry-run
 ```
@@ -361,7 +388,20 @@ CLI 只是 helper automation。它不决定语义真相，不自动解决冲突�
 
 ## v1.1 新增内容
 
-v1.1 保持核心协议小而清晰，同时增加可选 project-state 层：
+v1.1 保持核心协议小而清晰，同时把 repo-local state model 扩展到更适合多
+session 长时间工作的形态。
+
+相比上一版 core-only 形态：
+
+| 上一版基线 | v1.1 提升 |
+| --- | --- |
+| 基础 project、session、contract、review、integration 和 ledger artifacts。 | 更清晰的 session registration：`must_read`、`must_update`、handoff、escalation policy 和 recovery snapshots。 |
+| 主要依赖人工维护跨 session 记忆纪律。 | 显式 semantic conflict lifecycle：`merge_proposals/`、pending ledger events、review/integration promotion。 |
+| 没有一等外部来源导入层。 | review-first import layer：`imports/inbox/`、`imports/sources/`、`imports/index.json`、`external_import_review` 和端到端外部 skill 导入验证脚本。 |
+| agent prompt 主要手写。 | 具体 Codex/Claude Code prompts，以及可选 Codex SDK runner，用于可重复的多 session 编排。 |
+| 主要是 core artifacts。 | 可选 advanced packs：verification、scenario tests、review routing、runtime evidence、signed skills、factory-style plans、cognitive audit notes。 |
+
+v1.1 新增区域：
 
 | Area | Files | 新增能力 |
 | --- | --- | --- |
