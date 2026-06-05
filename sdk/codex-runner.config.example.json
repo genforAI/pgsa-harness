@@ -1,0 +1,10 @@
+{
+  "model": "gpt-5.4",
+  "sandbox": "workspace_write",
+  "sessions": [
+    "backend",
+    "frontend_components",
+    "docs_security_integration"
+  ],
+  "task": "Continue the registered PGSA session work. Read the PGSA context first, stay inside session scope, and update must_update artifacts before handoff."
+}
