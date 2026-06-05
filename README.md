@@ -78,7 +78,7 @@ Core artifact roles:
 | `sessions.yaml` | Session identity, ownership, required reads, required updates, and handoff targets. |
 | `harness/<session>.md` | Per-session operating instructions. |
 | `contracts/*.json` | Shared producer/consumer assumptions, review state, acceptance tests, and breaking-change state. |
-| `state/*.summary.md` | Compressed session memory. |
+| `state/*.summary.md` | Compressed session memory plus recovery snapshot: scope, failed commands, touched files, open risks, and next action. |
 | `merge_proposals/*.md` | Open semantic conflict records with evidence, options, and decision owner. |
 | `reviews/*` | Review-gate status and blocking issues. |
 | `integration/integration_report.json` | Current integration readiness, blockers, open merge proposals, and contract review state. |
@@ -111,6 +111,23 @@ flowchart LR
   E --> F["ledger/pending or accepted ledger event"]
   F --> G["next session resumes<br/>from repo-local state"]
 ```
+
+## Next-Session Recovery
+
+Repo-local state only helps if the next run can recover without replaying chat.
+For that reason, each `pgsa/state/<session>.summary.md` should keep a short
+recovery snapshot:
+
+- current scope;
+- last known good state;
+- failed commands or checks that still matter;
+- touched files, including files inspected or partially edited;
+- open risks, blockers, or unresolved assumptions;
+- next recommended action.
+
+This snapshot is intentionally smaller than a transcript. It gives the next
+Codex, Claude Code, or human reviewer enough context to restart work, decide
+what must be re-run, and avoid repeating failed commands.
 
 ## Multi-Session Registration
 
