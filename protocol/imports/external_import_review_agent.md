@@ -36,7 +36,7 @@ the shipped protocol folders.
 7. If the source should remain inactive, leave it as `reviewed` or mark it
    `rejected`.
 8. If the source is accepted as project-level skill provenance, run
-   `pgsa import promote <source_id> --accept-import`.
+   `pgsa import promote <source_id> --accept-import --applies-to <sessions>`.
 9. Update the session summary and pending ledger event with the decision.
 10. Handoff to `docs_security_integration` when accepted imports affect
     contracts, roles, capabilities, or integration readiness.
@@ -46,7 +46,7 @@ the shipped protocol folders.
 ```bash
 PYTHONPATH=pgsa-harness/tools/python python3 -m pgsa_cli.main --root . import process-inbox
 PYTHONPATH=pgsa-harness/tools/python python3 -m pgsa_cli.main --root . import review <source_id>
-PYTHONPATH=pgsa-harness/tools/python python3 -m pgsa_cli.main --root . import promote <source_id> --accept-import
+PYTHONPATH=pgsa-harness/tools/python python3 -m pgsa_cli.main --root . import promote <source_id> --accept-import --applies-to backend,frontend_components
 PYTHONPATH=pgsa-harness/tools/python python3 -m pgsa_cli.main --root . validate --strict-advanced
 ```
 
@@ -54,9 +54,14 @@ PYTHONPATH=pgsa-harness/tools/python python3 -m pgsa_cli.main --root . validate 
 It does not install global skills, execute imported code, or bypass any agent
 approval/sandboxing layer.
 
+Use `--applies-to` to make the accepted provenance visible to later sessions.
+For example, a UI helper skill can apply to `frontend_components`, while a
+contract review helper can apply to both `backend` and
+`docs_security_integration`.
+
 ## Promotion Boundary
 
-Imported source material stays in `pgsa/imports/sources/<source_id>/`.
+Imported source material stays in `pgsa/imports/sources/<source_id>`.
 Accepted project metadata can move into:
 
 - `pgsa/skills/signed_skill_manifest.yaml`
