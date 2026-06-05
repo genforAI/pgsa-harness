@@ -1,4 +1,4 @@
-name: apply-session-agent-folders
+name: finalize-session-agent-docs
 
 on:
   push:
@@ -13,57 +13,155 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Apply verified PGSA session-agent patch
+      - name: Patch README session-agent docs
         run: |
-          cat > /tmp/pgsa-session-agent.patch.xz.b64 <<'B64'
-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
-B64
-          base64 -d /tmp/pgsa-session-agent.patch.xz.b64 > /tmp/pgsa-session-agent.patch.xz
-          xz -d /tmp/pgsa-session-agent.patch.xz
-          git apply /tmp/pgsa-session-agent.patch
+          python3 - <<'PY'
+          from pathlib import Path
+
+          readme = Path('README.md')
+          text = readme.read_text()
+          text = text.replace(
+              '--must-read imports/index.json,imports/sources/external_pack/ \\\n',
+              '--must-read imports/index.json,imports/sources/ \\\n',
+          )
+          if '### Session Agent Folders' not in text:
+              marker = (
+                  'This creates the `sessions.yaml` entry plus matching `harness/` and `state/`\n'
+                  'files. The new session still has explicit scope and required artifacts; it does\n'
+                  'not receive global authority over the repo.\n\n'
+              )
+              section = '''### Session Agent Folders
+
+The registry is still `pgsa/sessions.yaml`. A session agent folder is only a
+launch wrapper for a fresh Codex, Claude Code, SDK, or external-agent session.
+It gives that session its own `AGENTS.md` / `SKILL.md` while pointing back to the
+same PGSA root, harness root, required reads, required updates, and accepted
+skill manifest.
+
+Default embedded layout:
+
+```bash
+PYTHONPATH=pgsa-harness/tools/python python3 -m pgsa_cli.main --root . session-agent create backend
+```
+
+This writes:
+
+```text
+pgsa/session_agents/backend/
+  AGENTS.md
+  SKILL.md
+  PGSA_SESSION.json
+```
+
+For a sibling long-running session folder or separate worktree:
+
+```bash
+PYTHONPATH=pgsa-harness/tools/python python3 -m pgsa_cli.main --root target-project \
+  session-agent create backend \
+  --out ../agent-sessions/backend \
+  --harness-root ../pgsa-harness
+```
+
+The generated `PGSA_SESSION.json` stores relative pointers to `pgsa_root`,
+`harness_root`, `sessions.yaml`, `harness/<session>.md`,
+`state/<session>.summary.md`, and `skills/signed_skill_manifest.yaml`.
+
+Accepted external skills are reusable across sessions through
+`pgsa/skills/signed_skill_manifest.yaml`: a session should use only entries
+whose `applies_to` contains that session id or `*`. Raw
+`pgsa/imports/sources/<source_id>/` content remains review material, not active
+guidance, unless the session is `external_import_review` or the source is
+explicitly listed in `must_read`.
+
+'''
+              if marker not in text:
+                  raise SystemExit('README insertion marker not found')
+              text = text.replace(marker, marker + section)
+          text = text.replace(
+              '3. Let that session read `imports/index.json` and `imports/sources/<source_id>/.`',
+              '3. Let that session read `imports/index.json` and the reviewed\n   `imports/sources/<source_id>/.`',
+          )
+          text = text.replace(
+              '3. Let that session read `imports/index.json` and `imports/sources/<source_id>/`.',
+              '3. Let that session read `imports/index.json` and the reviewed\n   `imports/sources/<source_id>/`.',
+          )
+          readme.write_text(text)
+
+          cn = Path('README.zh-CN.md')
+          text = cn.read_text()
+          text = text.replace(
+              '--must-read imports/index.json,imports/sources/external_pack/ \\\n',
+              '--must-read imports/index.json,imports/sources/ \\\n',
+          )
+          if '### Session Agent 文件夹' not in text:
+              marker = (
+                  '  --handoff-to docs_security_integration \\\n'
+                  '  --self-registered\n'
+                  '```\n\n'
+              )
+              section = '''### Session Agent 文件夹
+
+真正的注册表仍然是 `pgsa/sessions.yaml`。Session agent 文件夹只是给一个新开的
+Codex、Claude Code、SDK 或外部 agent session 使用的启动包装器：它给这个 session
+一个自己的 `AGENTS.md` / `SKILL.md`，同时指回同一份 PGSA root、harness root、
+required reads、required updates 和 accepted skill manifest。
+
+默认内嵌布局：
+
+```bash
+PYTHONPATH=pgsa-harness/tools/python python3 -m pgsa_cli.main --root . session-agent create backend
+```
+
+这会写入：
+
+```text
+pgsa/session_agents/backend/
+  AGENTS.md
+  SKILL.md
+  PGSA_SESSION.json
+```
+
+如果每个长时间运行的 session 有自己的 sibling 文件夹或 worktree：
+
+```bash
+PYTHONPATH=pgsa-harness/tools/python python3 -m pgsa_cli.main --root target-project \
+  session-agent create backend \
+  --out ../agent-sessions/backend \
+  --harness-root ../pgsa-harness
+```
+
+生成的 `PGSA_SESSION.json` 会保存指向 `pgsa_root`、`harness_root`、
+`sessions.yaml`、`harness/<session>.md`、`state/<session>.summary.md` 和
+`skills/signed_skill_manifest.yaml` 的相对路径。
+
+已接受的外部 skills 通过 `pgsa/skills/signed_skill_manifest.yaml` 被多个 session
+复用：session 只能使用 `applies_to` 包含自己 session id 或 `*` 的条目。Raw
+`pgsa/imports/sources/<source_id>/` 仍然是 review material，不是 active guidance；
+除非当前 session 是 `external_import_review`，或者这个 source 被显式写进该
+session 的 `must_read`。
+
+'''
+              if marker not in text:
+                  raise SystemExit('README.zh-CN insertion marker not found')
+              text = text.replace(marker, marker + section)
+          cn.write_text(text)
+          PY
+      - name: Remove one-off workflow
+        run: rm .github/workflows/apply-session-agent-folders.yml
+      - name: Verify
+        run: |
           PYTHONPATH=tools/python python3 -m unittest discover -s tools/python/tests -t tools/python
           find tools/python -type d -name __pycache__ -prune -exec rm -rf {} +
           python3 tools/scripts/validate_release.py --root .
           PYTHONPATH=tools/python python3 -m pgsa_cli.main --root examples/teamtask-projectboard validate --strict-advanced
+      - name: Commit final docs
+        run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add -A
-          git commit -m "Add PGSA session agent folders"
-          git push
+          git add README.md README.zh-CN.md .github/workflows/apply-session-agent-folders.yml
+          if git diff --cached --quiet; then
+            echo "No changes to commit"
+          else
+            git commit -m "Finalize PGSA session agent documentation"
+            git push
+          fi
