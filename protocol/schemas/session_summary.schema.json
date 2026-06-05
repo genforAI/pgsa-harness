@@ -5,8 +5,22 @@
   "properties": {
     "session": {"type": "string"},
     "scope": {"type": "string"},
+    "recovery_snapshot": {
+      "type": "object",
+      "properties": {
+        "last_known_good_state": {"type": "string"},
+        "failed_commands": {"type": "array", "items": {"type": "string"}},
+        "touched_files": {"type": "array", "items": {"type": "string"}},
+        "open_risks": {"type": "array", "items": {"type": "string"}},
+        "next_action": {"type": "string"}
+      },
+      "additionalProperties": true
+    },
     "completed": {"type": "array", "items": {"type": "string"}},
     "changed_files": {"type": "array", "items": {"type": "string"}},
+    "touched_files": {"type": "array", "items": {"type": "string"}},
+    "failed_commands": {"type": "array", "items": {"type": "string"}},
+    "open_risks": {"type": "array", "items": {"type": "string"}},
     "contract_impact": {"type": "string"},
     "integration_readiness": {"type": "string"}
   },
