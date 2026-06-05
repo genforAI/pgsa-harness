@@ -40,4 +40,16 @@ PYTHONPATH=tools/python python3 -m pgsa_cli.main --root . import stats
 PYTHONPATH=tools/python python3 -m pgsa_cli.main --root . session register external_skill_import --role external-skill-review --scope "triage imported skills" --must-read imports/index.json,imports/sources/external_pack/ --must-update state/external_skill_import.summary.md,ledger/pending/
 ```
 
+End-to-end external verification:
+
+```bash
+python3 tools/scripts/verify_external_skill_imports.py
+```
+
+The verification script clones public external skill sources, drops them into a
+temporary project's `pgsa/imports/inbox/`, runs `process-inbox`, runs
+`import review` for each source, checks that the inbox is cleaned, checks that
+review artifacts and pending ledger events exist, and validates the resulting
+PGSA project.
+
 This creates an explicit integration trail, not an automatic plugin loader.
