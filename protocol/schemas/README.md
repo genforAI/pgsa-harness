@@ -1,6 +1,6 @@
 # PGSA Artifact Schemas
 
-PGSA Harness Core v1.1 uses JSON-compatible structured files, YAML files, JSONL
+PGSA Harness Core v1.2 uses JSON-compatible structured files, YAML files, JSONL
 ledgers, and Markdown artifacts. Schemas document the expected artifact shape;
 the optional CLI performs lightweight validation but is not the semantic source
 of truth.
