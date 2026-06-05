@@ -105,3 +105,40 @@ sessions:
       block_integration_when:
         - unresolved merge proposals remain
         - any contract review is blocking
+  external_import_review:
+    role: external-import-review
+    status: active
+    owner_scope:
+      - external harness import
+      - skill pack triage
+      - protocol compatibility review
+    produces:
+      - state/external_import_review.summary.md
+      - imports/index.json
+      - ledger/pending/
+    consumes:
+      - imports/index.json
+      - imports/inbox/
+      - imports/sources/
+      - sessions.yaml
+    must_read:
+      - project.yaml
+      - sessions.yaml
+      - imports/index.json
+      - imports/inbox/
+      - imports/sources/
+      - ledger/coherence_ledger.jsonl
+    must_update:
+      - harness/external_import_review.md
+      - state/external_import_review.summary.md
+      - imports/index.json
+      - ledger/pending/
+    handoff_to:
+      - docs_security_integration
+    escalation_policy:
+      create_merge_proposal_when:
+        - imported content conflicts with existing project contracts
+        - imported skill behavior changes session scope
+        - external protocol assumptions are incompatible with PGSA state
+      block_integration_when:
+        - imported content has not been triaged
