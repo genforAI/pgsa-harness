@@ -8,6 +8,7 @@ from pgsa_core.templates.defaults import (
     ADVANCED_DIRS,
     API_CONTRACT_TEMPLATE,
     INTEGRATION_REPORT_TEMPLATE,
+    IMPORT_INDEX_TEMPLATE,
     PROJECT_TEMPLATE,
     REVIEW_TEMPLATE,
     SESSION_HARNESS_TEMPLATE,
@@ -35,6 +36,9 @@ PGSA_DIRS = [
     "ledger",
     "ledger/pending",
     "reports",
+    "imports",
+    "imports/inbox",
+    "imports/sources",
 ]
 
 
@@ -49,6 +53,7 @@ def init_pgsa(root: Path, force: bool = False, advanced: bool = False) -> list[P
         pgsa / "sessions.yaml": SESSIONS_TEMPLATE,
         pgsa / "contracts" / "api.project.v1.json": API_CONTRACT_TEMPLATE,
         pgsa / "integration" / "integration_report.json": INTEGRATION_REPORT_TEMPLATE,
+        pgsa / "imports" / "index.json": IMPORT_INDEX_TEMPLATE,
     }
     if advanced:
         targets.update(
