@@ -233,6 +233,17 @@ Imported content is source material, not trusted project guidance. This keeps
 external skills from silently changing the project contract or overriding
 current PGSA state.
 
+To run a real external import verification against public skill sources:
+
+```bash
+python3 tools/scripts/verify_external_skill_imports.py
+```
+
+The script clones external skills into a temporary project, drops them into
+`pgsa/imports/inbox/`, runs `process-inbox`, runs `import review`, verifies that
+the inbox was cleaned, checks review artifacts and pending ledger events, and
+runs `pgsa validate`.
+
 ## Conflict Lifecycle And Ledger Boundary
 
 PGSA does not silently auto-merge conflicting writes, and it is not a PR merge
