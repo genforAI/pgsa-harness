@@ -1,8 +1,9 @@
-# PGSA Codex SDK Demo
+# PGSA Optional Codex SDK Demo
 
 This folder is an optional demo layer. PGSA core remains the repo-local file
-protocol under `protocol/`; this demo shows how a user could drive multiple
-PGSA-registered Codex sessions through the official Codex SDK.
+protocol under `protocol/`; this demo is for users who already want to use the
+Codex SDK to drive multiple PGSA-registered sessions. It is not part of PGSA
+core and does not imply OpenAI/Codex endorsement or official integration.
 
 The official Python SDK controls the local Codex app-server over JSON-RPC and
 is installed separately:
