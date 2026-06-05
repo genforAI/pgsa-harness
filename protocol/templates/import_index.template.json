@@ -1,0 +1,21 @@
+{
+  "version": "1.0",
+  "imports": {
+    "example_external_skill_pack": {
+      "kind": "skill_pack",
+      "status": "indexed",
+      "origin_path": "../external-skills",
+      "local_path": "imports/sources/example_external_skill_pack",
+      "registered_at": "pending",
+      "recommended_session": "docs_security_integration",
+      "file_count": 0,
+      "total_bytes": 0,
+      "selected_files": [],
+      "notes": "Review before treating imported content as active project guidance."
+    }
+  },
+  "notes": [
+    "External harnesses, skills, or protocol folders are indexed here before an agent session integrates them.",
+    "An import record is evidence for review, not proof that the imported content is trusted or active."
+  ]
+}
