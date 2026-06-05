@@ -245,7 +245,7 @@ role:
 PYTHONPATH=pgsa-harness/tools/python python3 -m pgsa_cli.main --root . session register research_import \
   --role external-skill-review \
   --scope "triage imported skills and protocols" \
-  --must-read imports/index.json,imports/sources/external_pack/ \
+  --must-read imports/index.json,imports/sources/ \
   --must-update state/research_import.summary.md,ledger/pending/ \
   --handoff-to docs_security_integration \
   --self-registered
@@ -254,6 +254,46 @@ PYTHONPATH=pgsa-harness/tools/python python3 -m pgsa_cli.main --root . session r
 This creates the `sessions.yaml` entry plus matching `harness/` and `state/`
 files. The new session still has explicit scope and required artifacts; it does
 not receive global authority over the repo.
+
+### Session Agent Folders
+
+The registry is still `pgsa/sessions.yaml`. A session agent folder is only a
+launch wrapper for a fresh Codex, Claude Code, SDK, or external-agent session.
+It gives that session its own `AGENTS.md` / `SKILL.md` while pointing back to the
+same PGSA root, harness root, required reads, required updates, and accepted
+skill manifest.
+
+Default embedded layout:
+
+```bash
+PYTHONPATH=pgsa-harness/tools/python python3 -m pgsa_cli.main --root . session-agent create backend
+```
+
+This writes:
+
+```text
+pgsa/session_agents/backend/
+  AGENTS.md
+  SKILL.md
+  PGSA_SESSION.json
+```
+
+For a sibling long-running session folder or separate worktree:
+
+```bash
+PYTHONPATH=pgsa-harness/tools/python python3 -m pgsa_cli.main --root target-project   session-agent create backend   --out ../agent-sessions/backend   --harness-root ../pgsa-harness
+```
+
+The generated `PGSA_SESSION.json` stores relative pointers to `pgsa_root`,
+`harness_root`, `sessions.yaml`, `harness/<session>.md`,
+`state/<session>.summary.md`, and `skills/signed_skill_manifest.yaml`.
+
+Accepted external skills are reusable across sessions through
+`pgsa/skills/signed_skill_manifest.yaml`: a session should use only entries
+whose `applies_to` contains that session id or `*`. Raw
+`pgsa/imports/sources/<source_id>/` content remains review material, not active
+guidance, unless the session is `external_import_review` or the source is
+explicitly listed in `must_read`.
 
 ## External Skill And Harness Package Management
 
@@ -310,7 +350,8 @@ The intended flow is review-first package management:
 
 1. Place or copy the external source into `pgsa/imports/inbox/`.
 2. Let `external_import_review` or another import-review session process it.
-3. Let that session read `imports/index.json` and `imports/sources/<source_id>/`.
+3. Let that session read `imports/index.json` and the reviewed
+   `imports/sources/<source_id>/`.
 4. Run `pgsa import review <source_id>` or have the session write the same
    review artifacts manually.
 5. Run `pgsa import promote <source_id> --accept-import --applies-to <sessions>` when accepted skill

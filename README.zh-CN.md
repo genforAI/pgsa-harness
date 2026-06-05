@@ -137,11 +137,49 @@ external_import_review
 PYTHONPATH=pgsa-harness/tools/python python3 -m pgsa_cli.main --root . session register research_import \
   --role external-skill-review \
   --scope "triage imported skills and protocols" \
-  --must-read imports/index.json,imports/sources/external_pack/ \
+  --must-read imports/index.json,imports/sources/ \
   --must-update state/research_import.summary.md,ledger/pending/ \
   --handoff-to docs_security_integration \
   --self-registered
 ```
+
+### Session Agent 文件夹
+
+真正的注册表仍然是 `pgsa/sessions.yaml`。Session agent 文件夹只是给一个新开的
+Codex、Claude Code、SDK 或外部 agent session 使用的启动包装器：它给这个 session
+一个自己的 `AGENTS.md` / `SKILL.md`，同时指回同一份 PGSA root、harness root、
+required reads、required updates 和 accepted skill manifest。
+
+默认内嵌布局：
+
+```bash
+PYTHONPATH=pgsa-harness/tools/python python3 -m pgsa_cli.main --root . session-agent create backend
+```
+
+这会写入：
+
+```text
+pgsa/session_agents/backend/
+  AGENTS.md
+  SKILL.md
+  PGSA_SESSION.json
+```
+
+如果每个长时间运行的 session 有自己的 sibling 文件夹或 worktree：
+
+```bash
+PYTHONPATH=pgsa-harness/tools/python python3 -m pgsa_cli.main --root target-project   session-agent create backend   --out ../agent-sessions/backend   --harness-root ../pgsa-harness
+```
+
+生成的 `PGSA_SESSION.json` 会保存指向 `pgsa_root`、`harness_root`、
+`sessions.yaml`、`harness/<session>.md`、`state/<session>.summary.md` 和
+`skills/signed_skill_manifest.yaml` 的相对路径。
+
+已接受的外部 skills 通过 `pgsa/skills/signed_skill_manifest.yaml` 被多个 session
+复用：session 只能使用 `applies_to` 包含自己 session id 或 `*` 的条目。Raw
+`pgsa/imports/sources/<source_id>/` 仍然是 review material，不是 active guidance；
+除非当前 session 是 `external_import_review`，或者这个 source 被显式写进该
+session 的 `must_read`。
 
 ## Session Handoff Snapshot
 
