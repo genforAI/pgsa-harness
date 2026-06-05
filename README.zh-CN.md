@@ -190,6 +190,17 @@ import 命令会在 `pgsa/imports/index.json` 记录来源类型、原始路径�
 
 导入内容只是待审查来源材料，不是默认可信项目指导。这样可以避免外部 skill 静默改变当前 project contract 或覆盖 PGSA 状态。
 
+如果要运行一次真实外部导入验证：
+
+```bash
+python3 tools/scripts/verify_external_skill_imports.py
+```
+
+这个脚本会把公共外部 skills clone 到临时项目，放入
+`pgsa/imports/inbox/`，运行 `process-inbox`，对每个来源运行
+`import review`，确认 inbox 已清理、review artifacts 和 pending ledger
+events 已生成，并运行 `pgsa validate`。
+
 ## 冲突生命周期和 Ledger 边界
 
 PGSA 不会静默自动合并冲突写入，也不是 PR merge agent。Git、PR、CI 和 code review 仍然负责代码 diff、文本冲突、实现审查和最终 merge。
