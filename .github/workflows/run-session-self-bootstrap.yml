@@ -16,7 +16,7 @@ jobs:
         run: |
           awk '/PATCH_B64/{flag=!flag; next} flag {print}' .github/workflows/apply-session-self-bootstrap.yml > /tmp/pgsa-session-self-bootstrap.patch.b64
           base64 -d /tmp/pgsa-session-self-bootstrap.patch.b64 > /tmp/pgsa-session-self-bootstrap.patch
-          git apply /tmp/pgsa-session-self-bootstrap.patch
+          git apply --3way /tmp/pgsa-session-self-bootstrap.patch
           rm -f .github/workflows/apply-session-self-bootstrap.yml .github/workflows/run-session-self-bootstrap.yml
       - name: Run validation
         run: |
