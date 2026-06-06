@@ -17,6 +17,24 @@ jobs:
           awk '/PATCH_B64/{flag=!flag; next} flag {print}' .github/workflows/apply-session-self-bootstrap.yml > /tmp/pgsa-session-self-bootstrap.patch.b64
           base64 -d /tmp/pgsa-session-self-bootstrap.patch.b64 > /tmp/pgsa-session-self-bootstrap.patch
           git apply --3way /tmp/pgsa-session-self-bootstrap.patch
+          python3 - <<'PY'
+          from pathlib import Path
+          p = Path('README.md')
+          text = p.read_text(encoding='utf-8')
+          if 'There are two supported creation paths:' not in text:
+              text = text.replace(
+                  'Default embedded layout:\n',
+                  '''There are two supported creation paths:\n\n- agent-created: the running session reads `pgsa/sessions.yaml`, confirms its\n  session id, and creates/maintains its own `pgsa/session_agents/<session>/`\n  folder;\n- CLI-assisted: the user runs `pgsa session-agent create <session>` to create\n  the same files as a convenience.\n\nThe agent-created path is useful for long-running autonomous sessions because\nthe session owns its own launch wrapper while still routing back to the shared\nPGSA registry.\n\nAgent self-bootstrap prompt:\n\n```text\nUse PGSA session backend. Read pgsa/sessions.yaml and\npgsa-harness/protocol/session-agents/README.md. If\npgsa/session_agents/backend/ does not exist, create AGENTS.md, SKILL.md, and\nPGSA_SESSION.json there. Point them back to the shared pgsa/ root, backend\nmust_read/must_update artifacts, and pgsa/skills/signed_skill_manifest.yaml.\n```\n\nCLI-assisted embedded layout:\n''',
+                  1,
+              )
+          if 'The per-session `SKILL.md` should be a router into' not in text:
+              text = text.replace(
+                  'guidance, unless the session is `external_import_review` or the source is\nexplicitly listed in `must_read`.\n\n## External Skill And Harness Package Management',
+                  '''guidance, unless the session is `external_import_review` or the source is\nexplicitly listed in `must_read`.\n\nThe per-session `SKILL.md` should be a router into\n`pgsa/skills/signed_skill_manifest.yaml`, not a private skill registry. It\nshould not copy or activate raw external skill instructions. Accepted skills are\nproject-level records managed through `import review` / `import promote`, so the\nsame approved skill can be reused by multiple sessions without each session\nsilently importing its own copy.\n\n## External Skill And Harness Package Management''',
+                  1,
+              )
+          p.write_text(text, encoding='utf-8')
+          PY
           rm -f .github/workflows/apply-session-self-bootstrap.yml .github/workflows/run-session-self-bootstrap.yml
       - name: Run validation
         run: |
