@@ -263,7 +263,29 @@ It gives that session its own `AGENTS.md` / `SKILL.md` while pointing back to th
 same PGSA root, harness root, required reads, required updates, and accepted
 skill manifest.
 
-Default embedded layout:
+There are two supported creation paths:
+
+- agent-created: the running session reads `pgsa/sessions.yaml`, confirms its
+  session id, and creates/maintains its own `pgsa/session_agents/<session>/`
+  folder;
+- CLI-assisted: the user runs `pgsa session-agent create <session>` to create
+  the same files as a convenience.
+
+The agent-created path is useful for long-running autonomous sessions because
+the session owns its own launch wrapper while still routing back to the shared
+PGSA registry.
+
+Agent self-bootstrap prompt:
+
+```text
+Use PGSA session backend. Read pgsa/sessions.yaml and
+pgsa-harness/protocol/session-agents/README.md. If
+pgsa/session_agents/backend/ does not exist, create AGENTS.md, SKILL.md, and
+PGSA_SESSION.json there. Point them back to the shared pgsa/ root, backend
+must_read/must_update artifacts, and pgsa/skills/signed_skill_manifest.yaml.
+```
+
+CLI-assisted embedded layout:
 
 ```bash
 PYTHONPATH=pgsa-harness/tools/python python3 -m pgsa_cli.main --root . session-agent create backend
@@ -297,6 +319,13 @@ whose `applies_to` contains that session id or `*`. Raw
 `pgsa/imports/sources/<source_id>/` content remains review material, not active
 guidance, unless the session is `external_import_review` or the source is
 explicitly listed in `must_read`.
+
+The per-session `SKILL.md` should be a router into
+`pgsa/skills/signed_skill_manifest.yaml`, not a private skill registry. It
+should not copy or activate raw external skill instructions. Accepted skills are
+project-level records managed through `import review` / `import promote`, so the
+same approved skill can be reused by multiple sessions without each session
+silently importing its own copy.
 
 ## External Skill And Harness Package Management
 

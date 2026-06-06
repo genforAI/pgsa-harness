@@ -23,6 +23,13 @@ agent-facing PGSA workflow.
    continuity, and reviewable drift records around coding-agent work.
 7. Do not claim PGSA replaces CI, sandboxing, PR review, code review, Codex,
    Claude Code, or any hosted product.
+8. If a long-running session lacks its own launch folder, it may create
+   `pgsa/session_agents/<session>/AGENTS.md`, `SKILL.md`, and
+   `PGSA_SESSION.json` after reading `pgsa/sessions.yaml`. The folder must route
+   back to the shared PGSA root and must not become a second registry.
+9. Session-local `SKILL.md` files route to
+   `pgsa/skills/signed_skill_manifest.yaml`; they should not copy or activate
+   raw imports from `pgsa/imports/sources/`.
 
 ## Claude Code Usage Pattern
 

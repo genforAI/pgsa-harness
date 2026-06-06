@@ -150,7 +150,27 @@ Codex、Claude Code、SDK 或外部 agent session 使用的启动包装器：它
 一个自己的 `AGENTS.md` / `SKILL.md`，同时指回同一份 PGSA root、harness root、
 required reads、required updates 和 accepted skill manifest。
 
-默认内嵌布局：
+有两种创建方式：
+
+- agent-created：运行中的 session 先读 `pgsa/sessions.yaml`，确认自己的 session
+  id，然后自己创建/维护 `pgsa/session_agents/<session>/`；
+- CLI-assisted：用户运行 `pgsa session-agent create <session>`，用脚手架生成同一
+  组文件。
+
+agent-created 路径更符合长时间运行 session 的使用方式：session 自己拥有自己的启动
+wrapper，但语义身份仍然来自共享的 `pgsa/sessions.yaml`。
+
+Agent 自举 prompt：
+
+```text
+Use PGSA session backend. Read pgsa/sessions.yaml and
+pgsa-harness/protocol/session-agents/README.md. If
+pgsa/session_agents/backend/ does not exist, create AGENTS.md, SKILL.md, and
+PGSA_SESSION.json there. Point them back to the shared pgsa/ root, backend
+must_read/must_update artifacts, and pgsa/skills/signed_skill_manifest.yaml.
+```
+
+CLI-assisted 内嵌布局：
 
 ```bash
 PYTHONPATH=pgsa-harness/tools/python python3 -m pgsa_cli.main --root . session-agent create backend
@@ -183,6 +203,12 @@ PYTHONPATH=pgsa-harness/tools/python python3 -m pgsa_cli.main --root target-proj
 `pgsa/imports/sources/<source_id>/` 仍然是 review material，不是 active guidance；
 除非当前 session 是 `external_import_review`，或者这个 source 被显式写进该
 session 的 `must_read`。
+
+每个 session 自己的 `SKILL.md` 应该只是路由到
+`pgsa/skills/signed_skill_manifest.yaml`，不是私有 skill registry。它不应该复制或激活
+raw external skill instructions。已接受 skills 是通过 `import review` /
+`import promote` 管理的项目级记录，因此同一个被批准的 skill 可以被多个 session 复用，
+而不是每个 session 私自导入一份。
 
 ## Session Handoff Snapshot
 

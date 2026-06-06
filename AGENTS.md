@@ -30,6 +30,16 @@ not the agent-facing product surface.
    ledger records, and optional v1.1 advanced packs.
 11. Do not claim product benchmark evidence or that PGSA lives inside Codex,
    Claude Code, Grok Build, or any model.
+12. For long-running PGSA sessions, prefer agent-owned session wrappers: after
+   reading `pgsa/sessions.yaml`, the active session may create or refresh
+   `pgsa/session_agents/<session>/AGENTS.md`, `SKILL.md`, and
+   `PGSA_SESSION.json`. These files must point back to the shared PGSA root and
+   must not become a second registry.
+13. Per-session `SKILL.md` files route into the project-level
+   `pgsa/skills/signed_skill_manifest.yaml`. Do not copy raw imported skill
+   instructions into a session folder or activate anything from
+   `pgsa/imports/sources/` unless the source is explicitly in that session's
+   `must_read` or the session is `external_import_review`.
 
 ## Entry Points
 
@@ -38,6 +48,8 @@ not the agent-facing product surface.
 - `protocol/templates/`: starter PGSA artifacts.
 - `protocol/schemas/`: structured artifact schemas.
 - `protocol/rules/`: short boundaries.
+- `protocol/session-agents/README.md`: self-bootstrap pattern for per-session
+  launch folders.
 - `examples/teamtask-projectboard/`: complete example `pgsa/` layer.
 - `tools/python/`: optional CLI for users.
 

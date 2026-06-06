@@ -44,10 +44,15 @@ class SessionAgentShimTests(unittest.TestCase):
             self.assertIn("skills/signed_skill_manifest.yaml", agent_text)
             self.assertIn("Do not read or apply raw", agent_text)
             self.assertIn("external_import_review", agent_text)
+            self.assertIn("created/maintained by the", agent_text)
+            self.assertIn("Self-Maintenance", agent_text)
 
             skill_text = (agent_dir / "SKILL.md").read_text(encoding="utf-8")
             self.assertIn("name: pgsa-session-backend", skill_text)
             self.assertIn("registered `backend` session", skill_text)
+            self.assertIn("Skill Routing", skill_text)
+            self.assertIn("<pgsa_root>/skills/signed_skill_manifest.yaml", skill_text)
+            self.assertIn("applies_to", skill_text)
 
             validate = self.run_pgsa("--root", temp_dir, "validate", "--strict-advanced")
             self.assertEqual(validate.returncode, 0, validate.stdout)

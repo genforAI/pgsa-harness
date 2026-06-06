@@ -5,7 +5,9 @@
 - `harness/<session>.md`: per-session operating instructions.
 - `session_agents/<session>/`: optional launch folder for a fresh agent session,
   containing `AGENTS.md`, `SKILL.md`, and `PGSA_SESSION.json` pointers back to
-  the registered PGSA session.
+  the registered PGSA session. The folder may be created by the session agent
+  itself after reading `sessions.yaml`; its `SKILL.md` routes to
+  `skills/signed_skill_manifest.yaml`, not to raw unreviewed imports.
 - `contracts/*.json`: shared producer/consumer assumptions, review state, acceptance tests, and breaking-change state.
 - `state/*.summary.md`: compressed session memory plus next-session recovery
   snapshot: scope, failed commands, touched files, open risks, and next action.
